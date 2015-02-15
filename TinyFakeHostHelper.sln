@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C9256F
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyFakeHostHelper.Tests.Unit", "TinyFakeHostHelper.Tests.Unit\TinyFakeHostHelper.Tests.Unit.csproj", "{C7C4F389-1605-425E-9F0D-FAB4D9E661FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinyFakeHostHelper.Tests.Integration", "TinyFakeHostHelper.Tests.Integration\TinyFakeHostHelper.Tests.Integration.csproj", "{8BE057B4-72D4-4791-8462-9487C1F96369}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{F80D18CC-6E33-4396-A4E2-2096EBFB79C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F80D18CC-6E33-4396-A4E2-2096EBFB79C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F80D18CC-6E33-4396-A4E2-2096EBFB79C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7C4F389-1605-425E-9F0D-FAB4D9E661FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7C4F389-1605-425E-9F0D-FAB4D9E661FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7C4F389-1605-425E-9F0D-FAB4D9E661FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7C4F389-1605-425E-9F0D-FAB4D9E661FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BE057B4-72D4-4791-8462-9487C1F96369}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BE057B4-72D4-4791-8462-9487C1F96369}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BE057B4-72D4-4791-8462-9487C1F96369}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BE057B4-72D4-4791-8462-9487C1F96369}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
