@@ -6,7 +6,7 @@ namespace TinyFakeHostHelper.ServiceModules
     {
         public FakeServiceModule()
         {
-            Get["/"] = p => string.Empty;
+            Get["/helloWorld"] = p => "Hello world";
         }
     }
 }

@@ -8,7 +8,7 @@ namespace TinyFakeHostHelper.Tests.Integration
     public class TinyFakeHostTests
     {
         private const string BaseUri = "http://localhost:5432/";
-        private const string RequestPath = "/";
+        private const string RequestPath = "/helloWorld";
         private IRestClient _restClient;
         private IRestRequest _request;
 
@@ -34,6 +34,20 @@ namespace TinyFakeHostHelper.Tests.Integration
                 tinyFakeHost.Stop();
 
                 AssertThatWebServiceIsNotRunning();
+            }
+        }
+
+        [Test]
+        public void Given_TinyFakeHost_is_hosting_a_fake_web_service_When_a_web_client_queries_the_fake_web_service_it_returns_a_fake_content()
+        {
+            using (var tinyFakeHost = new TinyFakeHost(BaseUri))
+            {
+                tinyFakeHost.Start();
+
+                var response = _restClient.Execute(_request);
+                Assert.AreEqual("Hello world", response.Content);
+
+                tinyFakeHost.Stop();
             }
         }
 
