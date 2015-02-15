@@ -8,6 +8,14 @@ namespace TinyFakeHostHelper
         {
         }
 
+        public void Start()
+        {
+        }
+
+        public void Stop()
+        {
+        }
+
         public void Dispose()
         {
         }
