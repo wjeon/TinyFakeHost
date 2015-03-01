@@ -34,6 +34,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build.Tasks.v4.0" />
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -49,7 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Given_TinyFakeHost_is_hosting_a_fake_web_service.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TinyFakeHostTestBase.cs" />
     <Compile Include="TinyFakeHostTests.cs" />
   </ItemGroup>
   <ItemGroup>
