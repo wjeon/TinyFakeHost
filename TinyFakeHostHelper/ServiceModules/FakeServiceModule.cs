@@ -10,7 +10,12 @@ namespace TinyFakeHostHelper.ServiceModules
 
             Get["/vendors/9876-5432-1098-7654/products"] = p =>
                 {
-                    Response response = @"[{""id"":460173,""name"":""Product A"",""type"":""chair"",""manufactureYear"":2014},{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]";
+                    Response response = null;
+                    var parameters = Request.Query;
+                    if (parameters["type"] == "desk" && parameters["manufactureYear"] == "2013")
+                        response = @"[{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]";
+                    else
+                        response = @"[{""id"":460173,""name"":""Product A"",""type"":""chair"",""manufactureYear"":2014},{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]";
                     response.ContentType = "application/json";
                     response.StatusCode = HttpStatusCode.OK;
 
