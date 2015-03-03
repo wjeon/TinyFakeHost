@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using RestSharp;
+using TinyFakeHostHelper.RequestResponse;
 
 namespace TinyFakeHostHelper.Tests.Integration
 {
@@ -22,6 +23,14 @@ namespace TinyFakeHostHelper.Tests.Integration
         [TestCase("/vendors/9876-5432-1098-7654/products", "", @"[{""id"":460173,""name"":""Product A"",""type"":""chair"",""manufactureYear"":2014},{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]")]
         public void When_a_web_client_queries_the_fake_web_service_it_returns_a_fake_content(string resourcePath, string urlParameters, string responseContent)
         {
+            var fakeRequestResponse = new FakeRequestResponse
+                {
+                    FakeRequest = new FakeRequest{ Path = resourcePath, Parameters = urlParameters },
+                    FakeResponse = new FakeResponse { ContentType = "application/json", Content = responseContent }
+                };
+
+            _tinyFakeHost.AddRequestResponse(fakeRequestResponse);
+
             var request = CreateRequest(resourcePath);
 
             AddParametersToRequest(urlParameters, request);

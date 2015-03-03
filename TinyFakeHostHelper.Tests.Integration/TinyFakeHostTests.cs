@@ -55,7 +55,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             var response = RestClient.Execute(Request);
             Assert.AreEqual(ResponseStatus.Completed, response.ResponseStatus);
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         private void AssertThatWebServiceIsNotRunning()

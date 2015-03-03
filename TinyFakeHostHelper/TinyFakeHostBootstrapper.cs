@@ -17,7 +17,7 @@ namespace TinyFakeHostHelper
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
-            container.Register(new List<FakeRequestResponse>());
+            container.Register<IEnumerable<FakeRequestResponse>>(new List<FakeRequestResponse>());
             _container = container;
         }
     }
