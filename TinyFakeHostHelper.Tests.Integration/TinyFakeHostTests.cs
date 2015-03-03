@@ -1,6 +1,9 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Threading;
 using NUnit.Framework;
 using RestSharp;
+using TinyFakeHostHelper.Tests.Integration.Extensions;
 
 namespace TinyFakeHostHelper.Tests.Integration
 {
@@ -21,6 +24,30 @@ namespace TinyFakeHostHelper.Tests.Integration
                 tinyFakeHost.Stop();
 
                 AssertThatWebServiceIsNotRunning();
+            }
+        }
+
+        [Test]
+        public void When_2_TinyFakeHosts_run_concurrently_with_the_smae_port_number_one_waits_until_the_other_one_stops()
+        {
+            var runFakeHostThread = new Thread(() => RunFakeHostFor(5.Seconds()));
+
+            runFakeHostThread.Start();
+
+            Thread.Sleep(4.Seconds());
+
+            Assert.DoesNotThrow(() => RunFakeHostFor(10.Milliseconds()));
+        }
+
+        private static void RunFakeHostFor(TimeSpan duration)
+        {
+            using (var tinyFakeHost = new TinyFakeHost(BaseUri))
+            {
+                tinyFakeHost.Start();
+
+                Thread.Sleep(duration);
+
+                tinyFakeHost.Stop();
             }
         }
 
