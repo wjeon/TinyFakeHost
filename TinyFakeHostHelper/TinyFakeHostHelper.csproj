@@ -41,6 +41,7 @@
       <HintPath>..\packages\Nancy.Hosting.Self.1.0.0\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -49,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ITinyFakeHostConfiguration.cs" />
+    <Compile Include="Configuration\TinyFakeHostConfiguration.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />
     <Compile Include="Persistence\FakeRequestResponseRepository.cs" />
     <Compile Include="Persistence\IFakeRequestResponseRepository.cs" />
