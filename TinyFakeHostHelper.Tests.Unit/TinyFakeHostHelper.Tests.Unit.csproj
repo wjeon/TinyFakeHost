@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\NancyResponseExtensions.cs" />
+    <Compile Include="FakeRequestResponseRepositoryTests.cs" />
     <Compile Include="FakeResponseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TinyFakeHostTests.cs" />
