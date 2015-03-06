@@ -54,6 +54,7 @@
     <Compile Include="FakeResponseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TinyFakeHostTests.cs" />
+    <Compile Include="UrlParametersTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

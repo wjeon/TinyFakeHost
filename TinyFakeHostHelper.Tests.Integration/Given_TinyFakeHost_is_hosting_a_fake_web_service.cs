@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using RestSharp;
 using TinyFakeHostHelper.RequestResponse;
@@ -25,7 +26,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             var fakeRequestResponse = new FakeRequestResponse
                 {
-                    FakeRequest = new FakeRequest{ Path = resourcePath, Parameters = urlParameters },
+                    FakeRequest = new FakeRequest{ Path = resourcePath, Parameters = new UrlParameters(ParseUrlParameters(urlParameters)) },
                     FakeResponse = new FakeResponse { ContentType = "application/json", Content = responseContent }
                 };
 
@@ -46,6 +47,18 @@ namespace TinyFakeHostHelper.Tests.Integration
             _tinyFakeHost.Stop();
 
             _tinyFakeHost.Dispose();
+        }
+
+        private static IEnumerable<UrlParameter> ParseUrlParameters(string urlParameterString)
+        {
+            if (string.IsNullOrEmpty(urlParameterString))
+                return new List<UrlParameter>();
+
+            var parameters = urlParameterString.Split('&')
+                .Select(urlParam => urlParam.Split('='))
+                .Select(param => new UrlParameter(param[0], param[1]));
+
+            return parameters;
         }
 
         private static void AddParametersToRequest(string urlParameters, IRestRequest request)

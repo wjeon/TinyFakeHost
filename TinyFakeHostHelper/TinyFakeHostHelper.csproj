@@ -54,6 +54,8 @@
     <Compile Include="RequestResponse\FakeRequest.cs" />
     <Compile Include="RequestResponse\FakeRequestResponse.cs" />
     <Compile Include="RequestResponse\FakeResponse.cs" />
+    <Compile Include="RequestResponse\UrlParameter.cs" />
+    <Compile Include="RequestResponse\UrlParameters.cs" />
     <Compile Include="ServiceModules\FakeServiceModule.cs" />
     <Compile Include="TinyFakeHost.cs" />
     <Compile Include="TinyFakeHostBootstrapper.cs" />

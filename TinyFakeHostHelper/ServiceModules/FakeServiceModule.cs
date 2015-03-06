@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Nancy;
 using TinyFakeHostHelper.RequestResponse;
 
@@ -37,7 +36,7 @@ namespace TinyFakeHostHelper.ServiceModules
             {
                 var fakeRequest = fakeRequestResponse.FakeRequest;
 
-                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.Parameters.Equals(QueryParameters))
+                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.Parameters.Equals(Request.Query))
                 {
                     var fakeResponse = fakeRequestResponse.FakeResponse;
 
@@ -50,15 +49,6 @@ namespace TinyFakeHostHelper.ServiceModules
             if (!requestFound) response.StatusCode = HttpStatusCode.BadRequest;
 
             return response;
-        }
-
-        private string QueryParameters
-        {
-            get
-            {
-                DynamicDictionary query = Request.Query;
-                return string.Join("&", query.Keys.Select(key => string.Format("{0}={1}", key, query[key])));
-            }
         }
     }
 }
