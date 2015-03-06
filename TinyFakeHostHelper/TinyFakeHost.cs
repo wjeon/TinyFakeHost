@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using Nancy.Hosting.Self;
+using Nancy.TinyIoc;
+using TinyFakeHostHelper.RequestResponse;
 using TinyFakeHostHelper.Tests;
 
 namespace TinyFakeHostHelper
@@ -12,14 +15,17 @@ namespace TinyFakeHostHelper
         private readonly NancyHost _nancyHost;
         private bool _hostStarted;
         private Guid _hostId;
+        private readonly TinyIoCContainer _container;
 
         public TinyFakeHost(string uri)
         {
             _hostId = Guid.NewGuid();
-
+            var bootstrapper = new TinyFakeHostBootstrapper();
             var nancyHostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true } };
 
-            _nancyHost = new NancyHost(nancyHostConfig, new Uri(uri.TrimEnd('/') + "/"));
+            _nancyHost = new NancyHost(bootstrapper, nancyHostConfig, new Uri(uri.TrimEnd('/') + "/"));
+
+            _container = bootstrapper.GetTinyIoCContainer();
         }
 
         public void Start()
@@ -78,6 +84,12 @@ namespace TinyFakeHostHelper
         public void Dispose()
         {
             _nancyHost.Dispose();
+        }
+
+        public void AddRequestResponse(FakeRequestResponse fakeRequestResponse)
+        {
+            var fakeRequestResponses = _container.Resolve<IEnumerable<FakeRequestResponse>>() as List<FakeRequestResponse>;
+            if (fakeRequestResponses != null) fakeRequestResponses.Add(fakeRequestResponse);
         }
     }
 }

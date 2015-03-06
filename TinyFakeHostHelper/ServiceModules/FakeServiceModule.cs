@@ -1,26 +1,54 @@
-﻿using Nancy;
+﻿using System.Collections.Generic;
+using Nancy;
+using TinyFakeHostHelper.RequestResponse;
 
 namespace TinyFakeHostHelper.ServiceModules
 {
     public class FakeServiceModule : NancyModule
     {
-        public FakeServiceModule()
+        private readonly IEnumerable<FakeRequestResponse> _fakeRequestResponses;
+
+        public FakeServiceModule(IEnumerable<FakeRequestResponse> fakeRequestResponses)
         {
-            Get["/helloWorld"] = p => "Hello world";
+            _fakeRequestResponses = fakeRequestResponses;
 
-            Get["/vendors/9876-5432-1098-7654/products"] = p =>
+            BuildRoutesForGetRequest();
+        }
+
+        private void BuildRoutesForGetRequest()
+        {
+            var segments = string.Empty;
+
+            for (var i = 0; i < 10; i++)
+            {
+                segments += "/{segment" + i + "}";
+                Get[segments] = p => ReturnFakeResult();
+            }
+        }
+
+        private dynamic ReturnFakeResult()
+        {
+            var response = new Response { ContentType = "application/json" };
+
+            var requestFound = false;
+
+            foreach (var fakeRequestResponse in _fakeRequestResponses)
+            {
+                var fakeRequest = fakeRequestResponse.FakeRequest;
+
+                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.Parameters.Equals(Request.Query))
                 {
-                    Response response = null;
-                    var parameters = Request.Query;
-                    if (parameters["type"] == "desk" && parameters["manufactureYear"] == "2013")
-                        response = @"[{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]";
-                    else
-                        response = @"[{""id"":460173,""name"":""Product A"",""type"":""chair"",""manufactureYear"":2014},{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]";
-                    response.ContentType = "application/json";
-                    response.StatusCode = HttpStatusCode.OK;
+                    var fakeResponse = fakeRequestResponse.FakeResponse;
 
-                    return response;
-                };
+                    response = fakeResponse.ToNancyResponse();
+                    requestFound = true;
+                    break;
+                }
+            }
+
+            if (!requestFound) response.StatusCode = HttpStatusCode.BadRequest;
+
+            return response;
         }
     }
 }
