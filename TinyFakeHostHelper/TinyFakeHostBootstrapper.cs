@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using Nancy;
+﻿using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.TinyIoc;
-using TinyFakeHostHelper.RequestResponse;
+using TinyFakeHostHelper.Persistence;
 
 namespace TinyFakeHostHelper
 {
@@ -17,7 +16,7 @@ namespace TinyFakeHostHelper
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
-            container.Register<IEnumerable<FakeRequestResponse>>(new List<FakeRequestResponse>());
+            container.Register<IFakeRequestResponseRepository, FakeRequestResponseRepository>();
             _container = container;
         }
     }

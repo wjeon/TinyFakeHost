@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using Nancy.Hosting.Self;
 using Nancy.TinyIoc;
+using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 using TinyFakeHostHelper.Tests;
 
@@ -88,8 +88,9 @@ namespace TinyFakeHostHelper
 
         public void AddRequestResponse(FakeRequestResponse fakeRequestResponse)
         {
-            var fakeRequestResponses = _container.Resolve<IEnumerable<FakeRequestResponse>>() as List<FakeRequestResponse>;
-            if (fakeRequestResponses != null) fakeRequestResponses.Add(fakeRequestResponse);
+            var fakeRequestResponseRepository = _container.Resolve<IFakeRequestResponseRepository>();
+            
+            fakeRequestResponseRepository.Add(fakeRequestResponse);
         }
     }
 }

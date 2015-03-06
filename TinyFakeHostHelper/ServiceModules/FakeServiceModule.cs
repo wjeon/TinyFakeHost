@@ -1,16 +1,15 @@
-﻿using System.Collections.Generic;
-using Nancy;
-using TinyFakeHostHelper.RequestResponse;
+﻿using Nancy;
+using TinyFakeHostHelper.Persistence;
 
 namespace TinyFakeHostHelper.ServiceModules
 {
     public class FakeServiceModule : NancyModule
     {
-        private readonly IEnumerable<FakeRequestResponse> _fakeRequestResponses;
+        private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
 
-        public FakeServiceModule(IEnumerable<FakeRequestResponse> fakeRequestResponses)
+        public FakeServiceModule(IFakeRequestResponseRepository fakeRequestResponseRepository)
         {
-            _fakeRequestResponses = fakeRequestResponses;
+            _fakeRequestResponseRepository = fakeRequestResponseRepository;
 
             BuildRoutesForGetRequest();
         }
@@ -32,7 +31,7 @@ namespace TinyFakeHostHelper.ServiceModules
 
             var requestFound = false;
 
-            foreach (var fakeRequestResponse in _fakeRequestResponses)
+            foreach (var fakeRequestResponse in _fakeRequestResponseRepository.GetAll())
             {
                 var fakeRequest = fakeRequestResponse.FakeRequest;
 
