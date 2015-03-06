@@ -1,14 +1,17 @@
 ﻿using Nancy;
+using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Persistence;
 
 namespace TinyFakeHostHelper.ServiceModules
 {
     public class FakeServiceModule : NancyModule
     {
+        private readonly ITinyFakeHostConfiguration _tinyFakeHostConfiguration;
         private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
 
-        public FakeServiceModule(IFakeRequestResponseRepository fakeRequestResponseRepository)
+        public FakeServiceModule(ITinyFakeHostConfiguration tinyFakeHostConfiguration, IFakeRequestResponseRepository fakeRequestResponseRepository)
         {
+            _tinyFakeHostConfiguration = tinyFakeHostConfiguration;
             _fakeRequestResponseRepository = fakeRequestResponseRepository;
 
             BuildRoutesForGetRequest();
@@ -18,7 +21,7 @@ namespace TinyFakeHostHelper.ServiceModules
         {
             var segments = string.Empty;
 
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < _tinyFakeHostConfiguration.MaximumNumberOfUrlPathSegments; i++)
             {
                 segments += "/{segment" + i + "}";
                 Get[segments] = p => ReturnFakeResult();

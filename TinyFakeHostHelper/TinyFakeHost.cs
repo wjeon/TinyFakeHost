@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading;
 using Nancy.Hosting.Self;
 using Nancy.TinyIoc;
+using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 using TinyFakeHostHelper.Tests;
@@ -17,10 +18,10 @@ namespace TinyFakeHostHelper
         private Guid _hostId;
         private readonly TinyIoCContainer _container;
 
-        public TinyFakeHost(string uri)
+        public TinyFakeHost(string uri, ITinyFakeHostConfiguration fakeHostConfig = null)
         {
             _hostId = Guid.NewGuid();
-            var bootstrapper = new TinyFakeHostBootstrapper();
+            var bootstrapper = new TinyFakeHostBootstrapper(fakeHostConfig ?? new TinyFakeHostConfiguration());
             var nancyHostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true } };
 
             _nancyHost = new NancyHost(bootstrapper, nancyHostConfig, new Uri(uri.TrimEnd('/') + "/"));
