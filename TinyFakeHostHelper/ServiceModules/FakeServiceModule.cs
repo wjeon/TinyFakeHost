@@ -41,10 +41,7 @@ namespace TinyFakeHostHelper.ServiceModules
                 {
                     var fakeResponse = fakeRequestResponse.FakeResponse;
 
-                    response = fakeResponse.Content;
-                    response.ContentType = fakeResponse.ContentType;
-                    response.StatusCode = (HttpStatusCode)fakeResponse.StatusCode;
-
+                    response = fakeResponse.ToNancyResponse();
                     requestFound = true;
                     break;
                 }

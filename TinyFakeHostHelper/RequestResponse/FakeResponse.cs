@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Nancy;
 
 namespace TinyFakeHostHelper.RequestResponse
 {
@@ -15,5 +16,15 @@ namespace TinyFakeHostHelper.RequestResponse
         public IDictionary<string, string> Headers { get; set; }
         public string ReasonPhrase { get; set; }
         public System.Net.HttpStatusCode StatusCode { get; set; }
+
+        public Response ToNancyResponse()
+        {
+            Response response = Content;
+            response.ContentType = ContentType;
+            response.Headers = Headers;
+            response.StatusCode = (HttpStatusCode)StatusCode;
+            response.ReasonPhrase = ReasonPhrase;
+            return response;
+        }
     }
 }
