@@ -5,9 +5,9 @@ using System.Threading;
 using Nancy.Hosting.Self;
 using Nancy.TinyIoc;
 using TinyFakeHostHelper.Configuration;
+using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
-using TinyFakeHostHelper.Tests;
 
 namespace TinyFakeHostHelper
 {
