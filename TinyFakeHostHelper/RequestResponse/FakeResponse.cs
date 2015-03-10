@@ -16,6 +16,7 @@ namespace TinyFakeHostHelper.RequestResponse
         public IDictionary<string, string> Headers { get; set; }
         public string ReasonPhrase { get; set; }
         public System.Net.HttpStatusCode StatusCode { get; set; }
+        public int MillisecondsSleep { get; set; }
 
         public Response ToNancyResponse()
         {

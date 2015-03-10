@@ -53,6 +53,26 @@ namespace TinyFakeHostHelper.Tests.Integration
             Assert.AreEqual(responseContent, response.Content);
         }
 
+        [Test]
+        public void When_a_web_client_queries_the_fake_web_service_with_long_sleep_time_it_fakes_long_process_time()
+        {
+            const string resourcePath = "/timeout";
+
+            _faker.Fake(f => f
+                .IfRequest(resourcePath)
+                .ThenReturn(new FakeResponse{
+                    ContentType = "application/json",
+                    Content = @"{""message"":""Request Timeout""}",
+                    StatusCode = HttpStatusCode.RequestTimeout,
+                    MillisecondsSleep = 6000
+                })
+            );
+
+            var response = CallFakeService(resourcePath, 3000);
+
+            Assert.AreEqual("The operation has timed out", response.ErrorMessage);
+        }
+
         [TearDown]
         public void TearDown()
         {
@@ -61,11 +81,18 @@ namespace TinyFakeHostHelper.Tests.Integration
             _tinyFakeHost.Dispose();
         }
 
-        private IRestResponse CallFakeService(string resourcePath, string urlParameters = null)
+        private IRestResponse CallFakeService(string resourcePath, int timeout)
+        {
+            return CallFakeService(resourcePath, null, timeout);
+        }
+
+        private IRestResponse CallFakeService(string resourcePath, string urlParameters = null, int timeout = 0)
         {
             var request = CreateRequest(resourcePath);
 
             AddParametersToRequest(request, urlParameters);
+
+            RestClient.Timeout = timeout;
 
             var response = RestClient.Execute(request);
             return response;
