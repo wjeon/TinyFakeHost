@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TinyFakeHostHelper.Tests
+namespace TinyFakeHostHelper.Extensions
 {
     public static class GuidExtensions
     {

@@ -5,9 +5,8 @@ using System.Threading;
 using Nancy.Hosting.Self;
 using Nancy.TinyIoc;
 using TinyFakeHostHelper.Configuration;
-using TinyFakeHostHelper.Persistence;
-using TinyFakeHostHelper.RequestResponse;
-using TinyFakeHostHelper.Tests;
+using TinyFakeHostHelper.Extensions;
+using TinyFakeHostHelper.Fakers;
 
 namespace TinyFakeHostHelper
 {
@@ -71,6 +70,11 @@ namespace TinyFakeHostHelper
             stopwatch.Stop();
         }
 
+        public RequestResponseFaker GetFaker()
+        {
+            return new RequestResponseFaker(_container);
+        }
+
         public void Stop()
         {
             if (!_hostStarted)
@@ -85,13 +89,6 @@ namespace TinyFakeHostHelper
         public void Dispose()
         {
             _nancyHost.Dispose();
-        }
-
-        public void AddRequestResponse(FakeRequestResponse fakeRequestResponse)
-        {
-            var fakeRequestResponseRepository = _container.Resolve<IFakeRequestResponseRepository>();
-            
-            fakeRequestResponseRepository.Add(fakeRequestResponse);
         }
     }
 }

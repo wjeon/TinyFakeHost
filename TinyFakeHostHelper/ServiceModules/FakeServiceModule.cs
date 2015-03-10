@@ -1,4 +1,5 @@
-﻿using Nancy;
+﻿using System.Threading;
+using Nancy;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Persistence;
 
@@ -41,6 +42,9 @@ namespace TinyFakeHostHelper.ServiceModules
                 if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.Parameters.Equals(Request.Query))
                 {
                     var fakeResponse = fakeRequestResponse.FakeResponse;
+
+                    if (fakeResponse.MillisecondsSleep > 0)
+                        Thread.Sleep(fakeResponse.MillisecondsSleep);
 
                     response = fakeResponse.ToNancyResponse();
                     requestFound = true;
