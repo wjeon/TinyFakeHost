@@ -73,6 +73,19 @@ namespace TinyFakeHostHelper.Tests.Integration
             Assert.AreEqual("The operation has timed out", response.ErrorMessage);
         }
 
+        [Test]
+        public void When_a_web_client_queries_the_fake_web_service_the_requested_query_is_stored()
+        {
+            const string resourcePath = "/resourcePath";
+            const string urlParameters = "param=value";
+
+            CallFakeService(resourcePath, urlParameters);
+
+            var requestedQueries = _tinyFakeHost.GetRequestedQueries();
+
+            Assert.IsTrue(requestedQueries.Any(a => a.Path == resourcePath && a.Parameters.ToString() == urlParameters));
+        }
+
         [TearDown]
         public void TearDown()
         {

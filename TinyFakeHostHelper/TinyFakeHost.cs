@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
@@ -7,6 +8,8 @@ using Nancy.TinyIoc;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Fakers;
+using TinyFakeHostHelper.Persistence;
+using TinyFakeHostHelper.RequestResponse;
 
 namespace TinyFakeHostHelper
 {
@@ -73,6 +76,12 @@ namespace TinyFakeHostHelper
         public RequestResponseFaker GetFaker()
         {
             return new RequestResponseFaker(_container);
+        }
+
+        public IEnumerable<FakeRequest> GetRequestedQueries()
+        {
+            var requestedQueryRepository = _container.Resolve<IRequestedQueryRepository>();
+            return requestedQueryRepository.GetAll();
         }
 
         public void Stop()
