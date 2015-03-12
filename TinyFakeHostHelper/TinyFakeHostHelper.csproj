@@ -58,6 +58,8 @@
     <Compile Include="Fakers\RequestResponseFaker.cs" />
     <Compile Include="Persistence\FakeRequestResponseRepository.cs" />
     <Compile Include="Persistence\IFakeRequestResponseRepository.cs" />
+    <Compile Include="Persistence\IRequestedQueryRepository.cs" />
+    <Compile Include="Persistence\RequestedQueryRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestResponse\FakeRequest.cs" />
     <Compile Include="RequestResponse\FakeRequestResponse.cs" />

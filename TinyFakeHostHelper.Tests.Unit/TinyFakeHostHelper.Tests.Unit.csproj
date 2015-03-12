@@ -58,6 +58,7 @@
     <Compile Include="FluentFakerTests.cs" />
     <Compile Include="Helpers\AppSettingHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestedQueryRepositoryTests.cs" />
     <Compile Include="TinyFakeHostConfigurationTests.cs" />
     <Compile Include="TinyFakeHostTests.cs" />
     <Compile Include="UrlParametersTests.cs" />
