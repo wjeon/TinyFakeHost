@@ -25,6 +25,7 @@ namespace TinyFakeHostHelper
         {
             container.Register(_fakeHostConfiguration);
             container.Register<IFakeRequestResponseRepository, FakeRequestResponseRepository>();
+            container.Register<IRequestedQueryRepository, RequestedQueryRepository>();
             _container = container;
         }
     }

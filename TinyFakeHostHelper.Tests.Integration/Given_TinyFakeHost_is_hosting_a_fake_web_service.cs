@@ -36,6 +36,8 @@ namespace TinyFakeHostHelper.Tests.Integration
 
             var response = CallFakeService(resourcePath, urlParameters);
 
+            PrintRequestedQueries();
+
             Assert.AreEqual(responseContent, response.Content);
         }
 
@@ -49,6 +51,8 @@ namespace TinyFakeHostHelper.Tests.Integration
             );
 
             var response = CallFakeService(resourcePath);
+
+            PrintRequestedQueries();
 
             Assert.AreEqual(responseContent, response.Content);
         }
@@ -71,6 +75,19 @@ namespace TinyFakeHostHelper.Tests.Integration
             var response = CallFakeService(resourcePath, 3000);
 
             Assert.AreEqual("The operation has timed out", response.ErrorMessage);
+        }
+
+        [Test]
+        public void When_a_web_client_queries_the_fake_web_service_the_requested_query_is_stored()
+        {
+            const string resourcePath = "/resourcePath";
+            const string urlParameters = "param=value";
+
+            CallFakeService(resourcePath, urlParameters);
+
+            var requestedQueries = _tinyFakeHost.GetRequestedQueries();
+
+            Assert.IsTrue(requestedQueries.Any(a => a.Path == resourcePath && a.Parameters.ToString() == urlParameters));
         }
 
         [TearDown]
@@ -108,6 +125,12 @@ namespace TinyFakeHostHelper.Tests.Integration
         private static HttpStatusCode ParseHttpStatusCode(string statusCode)
         {
             return (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), statusCode);
+        }
+
+        private void PrintRequestedQueries()
+        {
+            foreach (var requestedQuery in _tinyFakeHost.GetRequestedQueries())
+                Console.WriteLine("Requested query - {0}", requestedQuery);
         }
     }
 }
