@@ -13,5 +13,10 @@ namespace TinyFakeHostHelper.RequestResponse
         public IDictionary<string, string> Headers { get; set; }
         public string Path { get; set; }
         public UrlParameters Parameters { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("Resource Path: {0}, Parameters: {1}", Path, Parameters);
+        }
     }
 }
