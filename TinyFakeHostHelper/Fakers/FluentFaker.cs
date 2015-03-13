@@ -3,6 +3,7 @@ using System.Linq;
 using Nancy.TinyIoc;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Exceptions;
+using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 
@@ -47,18 +48,9 @@ namespace TinyFakeHostHelper.Fakers
 
         public FluentFaker WithParameters(string urlParameterString)
         {
-            var parameters = ParseUrlParameters(urlParameterString);
+            var parameters = urlParameterString.ParseUrlParameters();
 
             return WithParameters(parameters);
-        }
-
-        private static IEnumerable<UrlParameter> ParseUrlParameters(string urlParameterString)
-        {
-            var parameters = urlParameterString.Split('&')
-                .Select(urlParam => urlParam.Split('='))
-                .Select(param => new UrlParameter(param[0], param[1]));
-
-            return parameters;
         }
 
         public FluentFaker WithParameters(IEnumerable<UrlParameter> urlParameters)
