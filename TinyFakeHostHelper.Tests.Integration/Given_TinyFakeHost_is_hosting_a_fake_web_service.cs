@@ -13,6 +13,8 @@ namespace TinyFakeHostHelper.Tests.Integration
     {
         private TinyFakeHost _tinyFakeHost;
         private RequestResponseFaker _faker;
+        private const string ResourcePath = "/resourcePath";
+        private const string UrlParameter = "param=value";
 
         [SetUp]
         public void Given()
@@ -80,14 +82,27 @@ namespace TinyFakeHostHelper.Tests.Integration
         [Test]
         public void When_a_web_client_queries_the_fake_web_service_the_requested_query_is_stored()
         {
-            const string resourcePath = "/resourcePath";
-            const string urlParameters = "param=value";
-
-            CallFakeService(resourcePath, urlParameters);
+            CallFakeService(ResourcePath, UrlParameter);
 
             var requestedQueries = _tinyFakeHost.GetRequestedQueries();
 
-            Assert.IsTrue(requestedQueries.Any(a => a.Path == resourcePath && a.Parameters.ToString() == urlParameters));
+            Assert.IsTrue(requestedQueries.Any(a => a.Path == ResourcePath && a.Parameters.ToString() == UrlParameter));
+        }
+
+        [Test]
+        public void When_fake_host_asserts_requested_query_correctly_with_resource_path_and_parameter_it_does_not_throw_exception()
+        {
+            CallFakeService(ResourcePath, UrlParameter);
+
+            var asserter = _tinyFakeHost.GetAsserter();
+
+            Assert.DoesNotThrow(() =>
+                asserter.Assert(a => a
+                    .Resource(ResourcePath)
+                    .WithParameters(UrlParameter)
+                    .WasRequested()
+                )
+            );
         }
 
         [TearDown]
