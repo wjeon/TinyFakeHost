@@ -10,6 +10,16 @@ namespace TinyFakeHostHelper.Tests.Integration
     [TestFixture]
     public class TinyFakeHostTests : TinyFakeHostTestBase
     {
+        private IRestRequest _request;
+
+        [SetUp]
+        public void Given()
+        {
+            const string resourcePath = "/helloWorld";
+
+            _request = CreateRequest(resourcePath);
+        }
+
         [Test]
         public void When_start_and_stop_TinyFakeHost_it_starts_and_stops_a_fake_service()
         {
@@ -53,14 +63,14 @@ namespace TinyFakeHostHelper.Tests.Integration
 
         private void AssertThatWebServiceIsRunning()
         {
-            var response = RestClient.Execute(Request);
+            var response = RestClient.Execute(_request);
             Assert.AreEqual(ResponseStatus.Completed, response.ResponseStatus);
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         private void AssertThatWebServiceIsNotRunning()
         {
-            var response = RestClient.Execute(Request);
+            var response = RestClient.Execute(_request);
             Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
             Assert.AreEqual(typeof (WebException), response.ErrorException.GetType());
             Assert.AreEqual("Unable to connect to the remote server", response.ErrorMessage);
