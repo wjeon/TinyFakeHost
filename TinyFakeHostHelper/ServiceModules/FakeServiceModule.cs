@@ -1,7 +1,9 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using Nancy;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Persistence;
+using TinyFakeHostHelper.RequestResponse;
 
 namespace TinyFakeHostHelper.ServiceModules
 {
@@ -9,17 +11,21 @@ namespace TinyFakeHostHelper.ServiceModules
     {
         private readonly ITinyFakeHostConfiguration _tinyFakeHostConfiguration;
         private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
+        private readonly IRequestedQueryRepository _requestedQueryRepository;
 
-        public FakeServiceModule(ITinyFakeHostConfiguration tinyFakeHostConfiguration, IFakeRequestResponseRepository fakeRequestResponseRepository)
+        public FakeServiceModule(ITinyFakeHostConfiguration tinyFakeHostConfiguration, IFakeRequestResponseRepository fakeRequestResponseRepository, IRequestedQueryRepository requestedQueryRepository)
         {
             _tinyFakeHostConfiguration = tinyFakeHostConfiguration;
             _fakeRequestResponseRepository = fakeRequestResponseRepository;
+            _requestedQueryRepository = requestedQueryRepository;
 
             BuildRoutesForGetRequest();
         }
 
         private void BuildRoutesForGetRequest()
         {
+            Get["/"] = p => ReturnFakeResult();
+
             var segments = string.Empty;
 
             for (var i = 0; i < _tinyFakeHostConfiguration.MaximumNumberOfUrlPathSegments; i++)
@@ -31,6 +37,16 @@ namespace TinyFakeHostHelper.ServiceModules
 
         private dynamic ReturnFakeResult()
         {
+            var query = Request.Query as DynamicDictionary;
+
+            var requestedQuery = new FakeRequest
+            {
+                Path = Request.Url.Path,
+                Parameters = new UrlParameters(query.Keys.Select(key => new UrlParameter(key, query[key].ToString())))
+            };
+
+            _requestedQueryRepository.Add(requestedQuery);
+
             var response = new Response { ContentType = "application/json" };
 
             var requestFound = false;
@@ -39,7 +55,7 @@ namespace TinyFakeHostHelper.ServiceModules
             {
                 var fakeRequest = fakeRequestResponse.FakeRequest;
 
-                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.Parameters.Equals(Request.Query))
+                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.Parameters.Equals(query))
                 {
                     var fakeResponse = fakeRequestResponse.FakeResponse;
 

@@ -13,6 +13,8 @@ namespace TinyFakeHostHelper.Tests.Integration
     {
         private TinyFakeHost _tinyFakeHost;
         private RequestResponseFaker _faker;
+        private const string ResourcePath = "/resourcePath";
+        private const string UrlParameter = "param=value";
 
         [SetUp]
         public void Given()
@@ -36,9 +38,12 @@ namespace TinyFakeHostHelper.Tests.Integration
 
             var response = CallFakeService(resourcePath, urlParameters);
 
+            PrintRequestedQueries();
+
             Assert.AreEqual(responseContent, response.Content);
         }
 
+        [TestCase("/", @"{""message"":""This is the root of the site""]", "application/json", "OK")]
         [TestCase("/helloWorld", "Hello world", "text/plain", "BadRequest")]
         [TestCase("/vendors/9876-5432-1098-7654/products", @"[{""id"":460173,""name"":""Product A"",""type"":""chair"",""manufactureYear"":2014},{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]", "application/json", "OK")]
         public void When_a_web_client_queries_the_fake_web_service_without_parameters_it_returns_a_fake_content(string resourcePath, string responseContent, string contentType, string statusCode)
@@ -49,6 +54,8 @@ namespace TinyFakeHostHelper.Tests.Integration
             );
 
             var response = CallFakeService(resourcePath);
+
+            PrintRequestedQueries();
 
             Assert.AreEqual(responseContent, response.Content);
         }
@@ -71,6 +78,78 @@ namespace TinyFakeHostHelper.Tests.Integration
             var response = CallFakeService(resourcePath, 3000);
 
             Assert.AreEqual("The operation has timed out", response.ErrorMessage);
+        }
+
+        [Test]
+        public void When_a_web_client_queries_the_fake_web_service_the_requested_query_is_stored()
+        {
+            CallFakeService(ResourcePath, UrlParameter);
+
+            var requestedQueries = _tinyFakeHost.GetRequestedQueries();
+
+            Assert.IsTrue(requestedQueries.Any(a => a.Path == ResourcePath && a.Parameters.ToString() == UrlParameter));
+        }
+
+        [Test]
+        public void When_fake_host_asserts_requested_query_correctly_with_resource_path_and_parameter_it_does_not_throw_exception()
+        {
+            CallFakeService(ResourcePath, UrlParameter);
+
+            var asserter = _tinyFakeHost.GetAsserter();
+
+            Assert.DoesNotThrow(() =>
+                asserter.Assert(a => a
+                    .Resource(ResourcePath)
+                    .WithParameters(UrlParameter)
+                    .WasRequested()
+                )
+            );
+        }
+
+        [Test]
+        public void When_fake_host_asserts_requested_query_correctly_with_resource_path_only_it_does_not_throw_exception()
+        {
+            CallFakeService(ResourcePath);
+
+            var asserter = _tinyFakeHost.GetAsserter();
+
+            Assert.DoesNotThrow(() =>
+                asserter.Assert(a => a
+                    .Resource(ResourcePath)
+                    .WasRequested()
+                )
+            );
+        }
+
+        [Test]
+        public void When_fake_host_asserts_requested_query_incorrectly_with_wrong_resource_path_it_throws_assertion_exception()
+        {
+            CallFakeService(ResourcePath);
+
+            var asserter = _tinyFakeHost.GetAsserter();
+
+            Assert.Throws<Exceptions.AssertionException>(() =>
+                asserter.Assert(a => a
+                    .Resource("/wrongResourcePath")
+                    .WasRequested()
+                )
+            );
+        }
+
+        [Test]
+        public void When_fake_host_asserts_requested_query_incorrectly_with_wrong_parameter_it_throws_assertion_exception()
+        {
+            CallFakeService(ResourcePath, UrlParameter);
+
+            var asserter = _tinyFakeHost.GetAsserter();
+
+            Assert.Throws<Exceptions.AssertionException>(() =>
+                asserter.Assert(a => a
+                    .Resource(ResourcePath)
+                    .WithParameters("param=wrong+parameter")
+                    .WasRequested()
+                )
+            );
         }
 
         [TearDown]
@@ -108,6 +187,12 @@ namespace TinyFakeHostHelper.Tests.Integration
         private static HttpStatusCode ParseHttpStatusCode(string statusCode)
         {
             return (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), statusCode);
+        }
+
+        private void PrintRequestedQueries()
+        {
+            foreach (var requestedQuery in _tinyFakeHost.GetRequestedQueries())
+                Console.WriteLine("Requested query - {0}", requestedQuery);
         }
     }
 }

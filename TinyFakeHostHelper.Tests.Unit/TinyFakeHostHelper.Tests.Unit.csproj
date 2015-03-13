@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TinyFakeHostHelper.Tests.Unit</RootNamespace>
     <AssemblyName>TinyFakeHostHelper.Tests.Unit</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +42,9 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -55,9 +59,11 @@
     <Compile Include="Extensions\NancyResponseExtensions.cs" />
     <Compile Include="FakeRequestResponseRepositoryTests.cs" />
     <Compile Include="FakeResponseTests.cs" />
+    <Compile Include="FluentAsserterTests.cs" />
     <Compile Include="FluentFakerTests.cs" />
     <Compile Include="Helpers\AppSettingHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestedQueryRepositoryTests.cs" />
     <Compile Include="TinyFakeHostConfigurationTests.cs" />
     <Compile Include="TinyFakeHostTests.cs" />
     <Compile Include="UrlParametersTests.cs" />

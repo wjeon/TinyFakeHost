@@ -17,5 +17,10 @@ namespace TinyFakeHostHelper.RequestResponse
 
             return this.OrderBy(r => r.Key).SequenceEqual(parameters.OrderBy(r => r.Key));
         }
+
+        public override string ToString()
+        {
+            return string.Join("&", this.Select(p => p.Key + "=" + p.Value));
+        }
     }
 }
