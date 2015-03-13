@@ -105,6 +105,52 @@ namespace TinyFakeHostHelper.Tests.Integration
             );
         }
 
+        [Test]
+        public void When_fake_host_asserts_requested_query_correctly_with_resource_path_only_it_does_not_throw_exception()
+        {
+            CallFakeService(ResourcePath);
+
+            var asserter = _tinyFakeHost.GetAsserter();
+
+            Assert.DoesNotThrow(() =>
+                asserter.Assert(a => a
+                    .Resource(ResourcePath)
+                    .WasRequested()
+                )
+            );
+        }
+
+        [Test]
+        public void When_fake_host_asserts_requested_query_incorrectly_with_wrong_resource_path_it_throws_assertion_exception()
+        {
+            CallFakeService(ResourcePath);
+
+            var asserter = _tinyFakeHost.GetAsserter();
+
+            Assert.Throws<Exceptions.AssertionException>(() =>
+                asserter.Assert(a => a
+                    .Resource("/wrongResourcePath")
+                    .WasRequested()
+                )
+            );
+        }
+
+        [Test]
+        public void When_fake_host_asserts_requested_query_incorrectly_with_wrong_parameter_it_throws_assertion_exception()
+        {
+            CallFakeService(ResourcePath, UrlParameter);
+
+            var asserter = _tinyFakeHost.GetAsserter();
+
+            Assert.Throws<Exceptions.AssertionException>(() =>
+                asserter.Assert(a => a
+                    .Resource(ResourcePath)
+                    .WithParameters("param=wrong+parameter")
+                    .WasRequested()
+                )
+            );
+        }
+
         [TearDown]
         public void TearDown()
         {
