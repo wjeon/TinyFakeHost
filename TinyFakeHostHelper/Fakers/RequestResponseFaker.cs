@@ -1,5 +1,7 @@
 ﻿using System;
 using Nancy.TinyIoc;
+using TinyFakeHostHelper.Configuration;
+using TinyFakeHostHelper.Persistence;
 
 namespace TinyFakeHostHelper.Fakers
 {
@@ -14,7 +16,10 @@ namespace TinyFakeHostHelper.Fakers
 
         public void Fake(Func<FluentFaker, FluentFaker> fake)
         {
-            fake(new FluentFaker(_container));
+            var fakeRequestResponseRepository = _container.Resolve<IFakeRequestResponseRepository>();
+            var configuration = _container.Resolve<ITinyFakeHostConfiguration>();
+
+            fake(new FluentFaker(fakeRequestResponseRepository, configuration));
         }
     }
 }
