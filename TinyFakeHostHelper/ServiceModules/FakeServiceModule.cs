@@ -24,6 +24,8 @@ namespace TinyFakeHostHelper.ServiceModules
 
         private void BuildRoutesForGetRequest()
         {
+            Get["/"] = p => ReturnFakeResult();
+
             var segments = string.Empty;
 
             for (var i = 0; i < _tinyFakeHostConfiguration.MaximumNumberOfUrlPathSegments; i++)

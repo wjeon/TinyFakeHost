@@ -43,6 +43,7 @@ namespace TinyFakeHostHelper.Tests.Integration
             Assert.AreEqual(responseContent, response.Content);
         }
 
+        [TestCase("/", @"{""message"":""This is the root of the site""]", "application/json", "OK")]
         [TestCase("/helloWorld", "Hello world", "text/plain", "BadRequest")]
         [TestCase("/vendors/9876-5432-1098-7654/products", @"[{""id"":460173,""name"":""Product A"",""type"":""chair"",""manufactureYear"":2014},{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]", "application/json", "OK")]
         public void When_a_web_client_queries_the_fake_web_service_without_parameters_it_returns_a_fake_content(string resourcePath, string responseContent, string contentType, string statusCode)
