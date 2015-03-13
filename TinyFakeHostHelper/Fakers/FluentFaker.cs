@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Nancy.TinyIoc;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Extensions;
@@ -11,15 +10,17 @@ namespace TinyFakeHostHelper.Fakers
 {
     public class FluentFaker
     {
-        private readonly TinyIoCContainer _container;
+        private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
+        private readonly ITinyFakeHostConfiguration _configuration;
         private FakeRequestResponse _fakeRequestResponse;
         private const string MaxNumberOfSegmentsExceptionMessage =
             "The number of segments of the requested url path is bigger than MaximumNumberOfUrlPathSegments setting " +
             "in the configuration or bigger than the default maximum number of url path segments";
 
-        public FluentFaker(TinyIoCContainer container)
+        public FluentFaker(IFakeRequestResponseRepository fakeRequestResponseRepository, ITinyFakeHostConfiguration configuration)
         {
-            _container = container;
+            _fakeRequestResponseRepository = fakeRequestResponseRepository;
+            _configuration = configuration;
         }
 
         public FluentFaker IfRequest(string path)
@@ -36,11 +37,9 @@ namespace TinyFakeHostHelper.Fakers
 
         private void GuardCondition_NumberOfPathSegmentsShouldNotBeBiggerThanMaxNumberOfPathSegmentsSetting(string path)
         {
-            var config = _container.Resolve<ITinyFakeHostConfiguration>();
-
             var segmentCount = path.TrimStart('/').Split('/').Count();
 
-            if (segmentCount > config.MaximumNumberOfUrlPathSegments)
+            if (segmentCount > _configuration.MaximumNumberOfUrlPathSegments)
                 throw new MaximumNumberOfUrlPathSegmentsException(
                     MaxNumberOfSegmentsExceptionMessage
                 );
@@ -64,7 +63,7 @@ namespace TinyFakeHostHelper.Fakers
         {
             _fakeRequestResponse.FakeResponse = fakeResponse;
 
-            AddFakeRequestResponseToRepository();
+            _fakeRequestResponseRepository.Add(_fakeRequestResponse);
 
             ClearRequestResponse();
 
@@ -74,13 +73,6 @@ namespace TinyFakeHostHelper.Fakers
         private void ClearRequestResponse()
         {
             _fakeRequestResponse = null;
-        }
-
-        private void AddFakeRequestResponseToRepository()
-        {
-            var fakeRequestResponseRepository = _container.Resolve<IFakeRequestResponseRepository>();
-
-            fakeRequestResponseRepository.Add(_fakeRequestResponse);
         }
     }
 }

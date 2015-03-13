@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Net;
 using NUnit.Framework;
-using Nancy.TinyIoc;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Fakers;
@@ -15,7 +14,6 @@ namespace TinyFakeHostHelper.Tests.Unit
     [TestFixture]
     public class FluentFakerTests
     {
-        private TinyIoCContainer _container;
         private IFakeRequestResponseRepository _repository;
         private ITinyFakeHostConfiguration _configuration;
         private FluentFaker _fluentFaker;
@@ -23,13 +21,10 @@ namespace TinyFakeHostHelper.Tests.Unit
         [SetUp]
         public void SetUp()
         {
-            _container = new TinyIoCContainer();
             _repository = new FakeRequestResponseRepository();
             _configuration = new TinyFakeHostConfiguration();
-            _container.Register(_repository);
-            _container.Register(_configuration);
 
-            _fluentFaker = new FluentFaker(_container);
+            _fluentFaker = new FluentFaker(_repository, _configuration);
         }
 
         [Test]
