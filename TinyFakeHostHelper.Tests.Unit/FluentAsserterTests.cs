@@ -15,6 +15,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         private const string ResourcePath = "/resourcePath";
         private const string ParamKey = "param";
         private const string ParamValue = "value";
+        private const string ResourcePathOnly = "/resourcePathOnly";
 
         [SetUp]
         public void SetUp()
@@ -35,12 +36,33 @@ namespace TinyFakeHostHelper.Tests.Unit
         }
 
         [Test]
+        public void When_FluentAsserter_asserts_requested_query_incorrectly_with_wrong_parameter_it_throws_assertion_exception()
+        {
+            Assert.Throws<Exceptions.AssertionException>(() =>
+                _fluentAsserter
+                    .Resource(ResourcePath)
+                    .WithParameters("param=wrong+parameter")
+                    .WasRequested()
+            );
+        }
+
+        [Test]
         public void When_FluentAsserter_asserts_requested_query_correctly_with_resource_path_and_parameter_it_does_not_throw_exception()
         {
             Assert.DoesNotThrow(() =>
                 _fluentAsserter
                     .Resource(ResourcePath)
                     .WithParameters(ParamKey + "=" + ParamValue)
+                    .WasRequested()
+            );
+        }
+
+        [Test]
+        public void When_FluentAsserter_asserts_requested_query_correctly_with_resource_path_only_it_does_not_throw_exception()
+        {
+            Assert.DoesNotThrow(() =>
+                _fluentAsserter
+                    .Resource(ResourcePathOnly)
                     .WasRequested()
             );
         }
@@ -55,9 +77,12 @@ namespace TinyFakeHostHelper.Tests.Unit
                 Parameters = new UrlParameters(new List<UrlParameter> { new UrlParameter(ParamKey, ParamValue) })
             };
 
+            var requestedQueryWithResourcePathOnly = new FakeRequest { Path = ResourcePathOnly };
+
             var requestedQueries = new List<FakeRequest>
             {
-                requestedQueryWithResourcePathAndParameter
+                requestedQueryWithResourcePathAndParameter,
+                requestedQueryWithResourcePathOnly
             };
 
             _requestedQueryRepository.Stub(s => s.GetAll()).Return(requestedQueries);
