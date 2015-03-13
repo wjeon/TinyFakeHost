@@ -2,12 +2,12 @@
 <package >
   <metadata>
     <id>TinyFakeHost</id>
-    <version>0.0.0.1</version>
+    <version>0.0.0.2</version>
     <authors>WJ</authors>
     <owners>WJ</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Tiny host that fakes services for test</description>
-    <releaseNotes>Initial Release</releaseNotes>
+    <releaseNotes>Support requested query assertion, .NET 4.0 and root path not supported bug fix.</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>Tiny Fake Host</tags>
     <dependencies>
@@ -15,5 +15,6 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="bin\TinyFakeHost.dll" target="lib\net40" /> 
   </files>
 </package>
