@@ -50,10 +50,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Asserters\FluentAsserter.cs" />
     <Compile Include="Configuration\ITinyFakeHostConfiguration.cs" />
     <Compile Include="Configuration\TinyFakeHostConfiguration.cs" />
+    <Compile Include="Exceptions\AssertionException.cs" />
     <Compile Include="Exceptions\MaximumNumberOfUrlPathSegmentsException.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Fakers\FluentFaker.cs" />
     <Compile Include="Fakers\RequestResponseFaker.cs" />
     <Compile Include="Persistence\FakeRequestResponseRepository.cs" />
