@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 using Nancy.Hosting.Self;
 using Nancy.TinyIoc;
+using TinyFakeHostHelper.Asserters;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Fakers;
@@ -76,6 +77,11 @@ namespace TinyFakeHostHelper
         public RequestResponseFaker GetFaker()
         {
             return new RequestResponseFaker(_container);
+        }
+
+        public RequestedQueryAsserter GetAsserter()
+        {
+            return new RequestedQueryAsserter(_container);
         }
 
         public IEnumerable<FakeRequest> GetRequestedQueries()
