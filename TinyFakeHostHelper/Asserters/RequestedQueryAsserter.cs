@@ -13,11 +13,17 @@ namespace TinyFakeHostHelper.Asserters
             _container = container;
         }
 
-        public void Assert(Func<FluentAsserter, FluentAsserter> asserter)
+        /// <summary>
+        /// Assert requested query with the resouce path and optional parameters.
+        /// </summary>
+        /// <param name="fluentAssertion">
+        /// Fluent requested query assertion details. Example: Assert( a => a.Resource("/products").WithParameters("type=desk").WasRequested() )
+        /// </param>
+        public void Assert(Func<FluentAsserter, FluentAsserter> fluentAssertion)
         {
             var requestedQueryRepository = _container.Resolve<IRequestedQueryRepository>();
 
-            asserter(new FluentAsserter(requestedQueryRepository));
+            fluentAssertion(new FluentAsserter(requestedQueryRepository));
         }
     }
 }
