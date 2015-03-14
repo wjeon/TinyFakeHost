@@ -12,9 +12,15 @@ namespace TinyFakeHostHelper.Fakers
             _container = container;
         }
 
-        public void Fake(Func<FluentFaker, FluentFaker> fake)
+        /// <summary>
+        /// Fake web response of the query request with the resouce path and optional parameters.
+        /// </summary>
+        /// <param name="fluentFake">
+        /// Fluent fake request response details. Example: Fake( f => f.IfRequest("/products").WithParameters("type=desk").ThenReturn(fakeResponse) )
+        /// </param>
+        public void Fake(Func<FluentFaker, FluentFaker> fluentFake)
         {
-            fake(new FluentFaker(_container));
+            fluentFake(new FluentFaker(_container));
         }
     }
 }
