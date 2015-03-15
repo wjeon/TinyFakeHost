@@ -37,7 +37,6 @@ namespace TinyFakeHostHelper.Tests.Unit
             {
                 FakeRequest = new FakeRequest
                 {
-                    Headers = new Dictionary<string, string> { { "header-" + key, "value-" + key } },
                     Path = "/" + key + "/products",
                     Parameters = new UrlParameters(new List<UrlParameter>
                     {
