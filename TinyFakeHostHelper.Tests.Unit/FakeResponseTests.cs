@@ -15,7 +15,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         {
             const string content = "Hello world";
             const string contentType = "application/json";
-            var headers = new Dictionary<string, string> { { "X-Test-A", "Test Heaser A" }, { "X-Test-B", "Test Heaser B" } };
+            var headers = new Dictionary<string, string> { { "X-Test-A", "Test Header A" }, { "X-Test-B", "Test Header B" } };
             const string reasonPhrase = "Request successfully processed";
 
             var fakeRespone = new FakeResponse
