@@ -90,6 +90,26 @@ public void Your_test_method()
     // your test code . . . .
 }
 ```
+***Fake web service processing long time (useful for testing the service timeout)***
+```
+[Test]
+public void Your_test_method()
+{
+    // your test code . . . .
+
+    _faker.Fake(f => f
+        .IfRequest("/vendors")
+        .ThenReturn(new FakeResponse{
+            ContentType = "application/json",
+            Content = @"{""message"":""Request Timeout""}",
+            StatusCode = HttpStatusCode.RequestTimeout,
+            MillisecondsSleep = 6000
+        })
+    );
+
+    // your test code . . . .
+}
+```
 ***Assert requested query***
 ```
 [Test]
