@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>TinyFakeHost</id>
-    <version>0.0.0.2</version>
+    <version>0.1.0.0</version>
     <authors>WJ</authors>
     <owners>WJ</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -16,5 +16,6 @@
   </metadata>
   <files>
     <file src="bin\TinyFakeHost.dll" target="lib\net40" /> 
+    <file src="bin\readme.txt" target="" /> 
   </files>
 </package>
