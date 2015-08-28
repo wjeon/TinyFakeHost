@@ -61,6 +61,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Fakers\FluentFaker.cs" />
     <Compile Include="Fakers\RequestResponseFaker.cs" />
+    <Compile Include="Messaging\FakeMessageRequest.cs" />
     <Compile Include="Persistence\FakeRequestResponseRepository.cs" />
     <Compile Include="Persistence\IFakeRequestResponseRepository.cs" />
     <Compile Include="Persistence\IRequestedQueryRepository.cs" />

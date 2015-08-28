@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using NUnit.Framework;
+using TinyFakeHostHelper.Messaging;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 
@@ -31,7 +32,7 @@ namespace TinyFakeHostHelper.Tests.Unit
             Assert.IsTrue(fakeRequestResponses.SequenceEqual(expectedFakeRequestResponses));
         }
 
-        private static FakeRequestResponse CreateFakeRequestResponseWith(string key, HttpStatusCode statusCode)
+        private static FakeRequestResponse CreateFakeRequestResponseWith(string key, HttpStatusCode statusCode, FakeMessageRequest messageRequest = null)
         {
             var fakeRequestResponse = new FakeRequestResponse
             {
@@ -51,7 +52,8 @@ namespace TinyFakeHostHelper.Tests.Unit
                     Headers = new Dictionary<string, string> {{"header-" + key, "value-" + key}},
                     ReasonPhrase = "reason phrase " + key,
                     StatusCode = statusCode
-                }
+                },
+                FakeMessageRequest = messageRequest
             };
 
             return fakeRequestResponse;
