@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using Nancy;
 using TinyFakeHostHelper.Configuration;
+using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 
@@ -43,11 +43,13 @@ namespace TinyFakeHostHelper.ServiceModules
         private dynamic ReturnFakeResult()
         {
             var query = Request.Query as DynamicDictionary;
+            var form = Request.Form as DynamicDictionary;
 
             var requestedQuery = new FakeRequest
             {
                 Path = Request.Url.Path,
-                Parameters = new UrlParameters(query.Keys.Select(key => new UrlParameter(key, query[key].ToString())))
+                Parameters = query.ToParameters(),
+                FormParameters = form.ToParameters()
             };
 
             _requestedQueryRepository.Add(requestedQuery);
@@ -60,7 +62,7 @@ namespace TinyFakeHostHelper.ServiceModules
             {
                 var fakeRequest = fakeRequestResponse.FakeRequest;
 
-                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.Parameters.Equals(query))
+                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.Parameters.Equals(query) && fakeRequest.FormParameters.Equals(form))
                 {
                     var fakeResponse = fakeRequestResponse.FakeResponse;
 

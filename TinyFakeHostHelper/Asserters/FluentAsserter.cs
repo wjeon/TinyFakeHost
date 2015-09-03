@@ -26,7 +26,7 @@ namespace TinyFakeHostHelper.Asserters
 
         public FluentAsserter WithParameters(string urlParameterString)
         {
-            var parameters = urlParameterString.ParseUrlParameters();
+            var parameters = urlParameterString.ParseParameters();
 
             return WithParameters(parameters);
         }

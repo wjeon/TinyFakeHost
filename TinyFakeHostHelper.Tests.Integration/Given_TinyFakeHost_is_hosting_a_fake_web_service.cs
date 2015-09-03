@@ -26,6 +26,36 @@ namespace TinyFakeHostHelper.Tests.Integration
             _faker = _tinyFakeHost.GetFaker();
         }
 
+        [TestCase("DELETE", "")]
+        [TestCase("OPTIONS", "")]
+        [TestCase("PATCH", "manufactureYear=2013")]
+        [TestCase("POST", "manufactureYear=2013")]
+        [TestCase("PUT", "manufactureYear=2013")]
+        public void When_a_web_client_queries_the_fake_web_service_with_different_methods_it_returns_a_fake_content_correctly(string requestMethod, string formParameters)
+        {
+            const string responseContent = @"[{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]";
+            const string resourcePath = "/vendors/9876-5432-1098-7654/products";
+            const string urlParameters = "type=desk";
+
+            _faker.Fake(f => f
+                .IfRequest(resourcePath)
+                .WithParameters(urlParameters)
+                .WithFormParameters(formParameters)
+                .ThenReturn(new FakeResponse { ContentType = "application/json", Content = responseContent, StatusCode = ParseHttpStatusCode("OK") })
+            );
+
+            var method = (Method)Enum.Parse(typeof(Method), requestMethod);
+
+            var request = new RestRequest(resourcePath, method);
+
+            AddUrlParametersToRequest(request, urlParameters);
+            AddFormParametersToRequest(request, formParameters);
+
+            var response = RestClient.Execute(request);
+
+            Assert.AreEqual(responseContent, response.Content);
+        }
+
         [TestCase("/vendors/9876-5432-1098-7654/products", "type=desk&manufactureYear=2013", @"[{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]", "application/json", "OK")]
         [TestCase("/invalidPath", "param=invalidParameter", @"{""message"":""Bad Request""}", "application/json", "BadRequest")]
         public void When_a_web_client_queries_the_fake_web_service_with_parameters_it_returns_a_fake_content(string resourcePath, string urlParameters, string responseContent, string contentType, string statusCode)
@@ -169,7 +199,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             var request = CreateRequest(resourcePath);
 
-            AddParametersToRequest(request, urlParameters);
+            AddUrlParametersToRequest(request, urlParameters);
 
             RestClient.Timeout = timeout;
 
@@ -177,10 +207,17 @@ namespace TinyFakeHostHelper.Tests.Integration
             return response;
         }
 
-        private static void AddParametersToRequest(IRestRequest request, string urlParameters)
+        private static void AddUrlParametersToRequest(IRestRequest request, string urlParameters)
         {
             if (!string.IsNullOrEmpty(urlParameters))
                 foreach (var param in urlParameters.Split('&').Select(parameter => parameter.Split('=')))
+                    request.AddQueryParameter(param[0], param[1]);
+        }
+
+        private static void AddFormParametersToRequest(IRestRequest request, string formParameters)
+        {
+            if (!string.IsNullOrEmpty(formParameters))
+                foreach (var param in formParameters.Split('&').Select(parameter => parameter.Split('=')))
                     request.AddParameter(param[0], param[1]);
         }
 
