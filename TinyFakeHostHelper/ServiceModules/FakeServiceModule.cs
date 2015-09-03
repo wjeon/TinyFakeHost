@@ -19,19 +19,24 @@ namespace TinyFakeHostHelper.ServiceModules
             _fakeRequestResponseRepository = fakeRequestResponseRepository;
             _requestedQueryRepository = requestedQueryRepository;
 
-            BuildRoutesForGetRequest();
+            var routeBuilders = new [] { Delete, Get, Options, Patch, Post, Put };
+
+            foreach (var routeBuilder in routeBuilders)
+            {
+                BuildRoutesForRequest(routeBuilder);
+            }
         }
 
-        private void BuildRoutesForGetRequest()
+        private void BuildRoutesForRequest(RouteBuilder routeBuilder)
         {
-            Get["/"] = p => ReturnFakeResult();
+            routeBuilder["/"] = p => ReturnFakeResult();
 
             var segments = string.Empty;
 
             for (var i = 0; i < _tinyFakeHostConfiguration.MaximumNumberOfUrlPathSegments; i++)
             {
                 segments += "/{segment" + i + "}";
-                Get[segments] = p => ReturnFakeResult();
+                routeBuilder[segments] = p => ReturnFakeResult();
             }
         }
 
