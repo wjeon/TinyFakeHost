@@ -48,7 +48,7 @@ namespace TinyFakeHostHelper.ServiceModules
             var requestedQuery = new FakeRequest
             {
                 Path = Request.Url.Path,
-                Parameters = query.ToParameters(),
+                UrlParameters = query.ToParameters(),
                 FormParameters = form.ToParameters()
             };
 
@@ -62,7 +62,7 @@ namespace TinyFakeHostHelper.ServiceModules
             {
                 var fakeRequest = fakeRequestResponse.FakeRequest;
 
-                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.Parameters.Equals(query) && fakeRequest.FormParameters.Equals(form))
+                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.UrlParameters.Equals(query) && fakeRequest.FormParameters.Equals(form))
                 {
                     var fakeResponse = fakeRequestResponse.FakeResponse;
 

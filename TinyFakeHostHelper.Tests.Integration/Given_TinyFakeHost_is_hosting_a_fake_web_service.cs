@@ -39,7 +39,7 @@ namespace TinyFakeHostHelper.Tests.Integration
 
             _faker.Fake(f => f
                 .IfRequest(resourcePath)
-                .WithParameters(urlParameters)
+                .WithUrlParameters(urlParameters)
                 .WithFormParameters(formParameters)
                 .ThenReturn(new FakeResponse { ContentType = "application/json", Content = responseContent, StatusCode = ParseHttpStatusCode("OK") })
             );
@@ -62,7 +62,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             _faker.Fake(f => f
                 .IfRequest(resourcePath)
-                .WithParameters(urlParameters)
+                .WithUrlParameters(urlParameters)
                 .ThenReturn(new FakeResponse { ContentType = contentType, Content = responseContent, StatusCode = ParseHttpStatusCode(statusCode) })
             );
 
@@ -117,7 +117,7 @@ namespace TinyFakeHostHelper.Tests.Integration
 
             var requestedQueries = _tinyFakeHost.GetRequestedQueries();
 
-            Assert.IsTrue(requestedQueries.Any(a => a.Path == ResourcePath && a.Parameters.ToString() == UrlParameter));
+            Assert.IsTrue(requestedQueries.Any(a => a.Path == ResourcePath && a.UrlParameters.ToString() == UrlParameter));
         }
 
         [Test]

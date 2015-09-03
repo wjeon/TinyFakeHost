@@ -6,14 +6,14 @@ namespace TinyFakeHostHelper.Extensions
 {
     public static class StringExtensions
     {
-        public static IEnumerable<UrlParameter> ParseParameters(this string parameterString)
+        public static IEnumerable<Parameter> ParseParameters(this string parameterString)
         {
             if (string.IsNullOrEmpty(parameterString))
-                return new List<UrlParameter>();
+                return new List<Parameter>();
 
             var parameters = parameterString.Split('&')
                 .Select(urlParam => urlParam.Split('='))
-                .Select(param => new UrlParameter(param[0], param[1]));
+                .Select(param => new Parameter(param[0], param[1]));
 
             return parameters;
         }

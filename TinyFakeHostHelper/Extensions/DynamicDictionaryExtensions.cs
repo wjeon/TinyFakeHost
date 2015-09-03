@@ -6,9 +6,9 @@ namespace TinyFakeHostHelper.Extensions
 {
     public static class DynamicDictionaryExtensions
     {
-        public static UrlParameters ToParameters(this DynamicDictionary parameters)
+        public static Parameters ToParameters(this DynamicDictionary parameters)
         {
-            return new UrlParameters(parameters.Keys.Select(key => new UrlParameter(key, parameters[key].ToString())));
+            return new Parameters(parameters.Keys.Select(key => new Parameter(key, parameters[key].ToString())));
         }
     }
 }

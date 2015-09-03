@@ -74,7 +74,7 @@ namespace TinyFakeHostHelper.Tests.Unit
             var requestedQueryWithResourcePathAndParameter = new FakeRequest
             {
                 Path = ResourcePath,
-                Parameters = new UrlParameters(new List<UrlParameter> { new UrlParameter(ParamKey, ParamValue) })
+                UrlParameters = new Parameters(new List<Parameter> { new Parameter(ParamKey, ParamValue) })
             };
 
             var requestedQueryWithResourcePathOnly = new FakeRequest { Path = ResourcePathOnly };

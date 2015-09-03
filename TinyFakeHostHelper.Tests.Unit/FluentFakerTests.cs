@@ -41,7 +41,7 @@ namespace TinyFakeHostHelper.Tests.Unit
 
             _fluentFaker
                 .IfRequest(path)
-                .WithParameters(parameters)
+                .WithUrlParameters(parameters)
                 .ThenReturn(fakeResponse);
 
             AssertThatFakeRequestAndResponseAreStored(path, parameters, content, contentType, statusCode, reasonPhrase);
@@ -104,7 +104,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         {
             return new FakeRequestResponse
             {
-                FakeRequest = new FakeRequest { Path = path, Parameters = ParseUrlParameters(parameters) },
+                FakeRequest = new FakeRequest { Path = path, UrlParameters = ParseUrlParameters(parameters) },
                 FakeResponse = CreateFakeResponse(content, contentType, statusCode, reasonPhrase)
             };
         }
@@ -120,14 +120,14 @@ namespace TinyFakeHostHelper.Tests.Unit
             };
         }
 
-        private static UrlParameters ParseUrlParameters(string urlParameterString)
+        private static Parameters ParseUrlParameters(string urlParameterString)
         {
             return string.IsNullOrEmpty(urlParameterString)
-                ? new UrlParameters()
-                : new UrlParameters(
+                ? new Parameters()
+                : new Parameters(
                     urlParameterString.Split('&')
                     .Select(urlParam => urlParam.Split('='))
-                    .Select(param => new UrlParameter(param[0], param[1]))
+                    .Select(param => new Parameter(param[0], param[1]))
                 );
         }
     }

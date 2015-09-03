@@ -45,16 +45,16 @@ namespace TinyFakeHostHelper.Fakers
                 );
         }
 
-        public FluentFaker WithParameters(string urlParameterString)
+        public FluentFaker WithUrlParameters(string urlParameterString)
         {
             var parameters = urlParameterString.ParseParameters();
 
-            return WithParameters(parameters);
+            return WithUrlParameters(parameters);
         }
 
-        public FluentFaker WithParameters(IEnumerable<UrlParameter> urlParameters)
+        public FluentFaker WithUrlParameters(IEnumerable<Parameter> urlParameters)
         {
-            _fakeRequestResponse.FakeRequest.Parameters = new UrlParameters(urlParameters);
+            _fakeRequestResponse.FakeRequest.UrlParameters = new Parameters(urlParameters);
 
             return this;
         }
@@ -66,9 +66,9 @@ namespace TinyFakeHostHelper.Fakers
             return WithFormParameters(parameters);
         }
 
-        public FluentFaker WithFormParameters(IEnumerable<UrlParameter> formParameters)
+        public FluentFaker WithFormParameters(IEnumerable<Parameter> formParameters)
         {
-            _fakeRequestResponse.FakeRequest.FormParameters = new UrlParameters(formParameters);
+            _fakeRequestResponse.FakeRequest.FormParameters = new Parameters(formParameters);
 
             return this;
         }
