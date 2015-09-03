@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Exceptions;
@@ -43,6 +44,18 @@ namespace TinyFakeHostHelper.Fakers
                 throw new MaximumNumberOfUrlPathSegmentsException(
                     MaxNumberOfSegmentsExceptionMessage
                 );
+        }
+
+        [Obsolete("Please use \"WithUrlParameters\" instead")]
+        public FluentFaker WithParameters(string urlParameterString)
+        {
+            return WithUrlParameters(urlParameterString);
+        }
+
+        [Obsolete("Please use \"WithUrlParameters\" instead")]
+        public FluentFaker WithParameters(IEnumerable<Parameter> urlParameters)
+        {
+            return WithUrlParameters(urlParameters);
         }
 
         public FluentFaker WithUrlParameters(string urlParameterString)

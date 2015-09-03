@@ -130,7 +130,7 @@ namespace TinyFakeHostHelper.Tests.Integration
             Assert.DoesNotThrow(() =>
                 asserter.Assert(a => a
                     .Resource(ResourcePath)
-                    .WithParameters(UrlParameter)
+                    .WithUrlParameters(UrlParameter)
                     .WasRequested()
                 )
             );
@@ -176,7 +176,7 @@ namespace TinyFakeHostHelper.Tests.Integration
             Assert.Throws<Exceptions.AssertionException>(() =>
                 asserter.Assert(a => a
                     .Resource(ResourcePath)
-                    .WithParameters("param=wrong+parameter")
+                    .WithUrlParameters("param=wrong+parameter")
                     .WasRequested()
                 )
             );

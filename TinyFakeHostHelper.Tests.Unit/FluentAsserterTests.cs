@@ -41,7 +41,7 @@ namespace TinyFakeHostHelper.Tests.Unit
             Assert.Throws<Exceptions.AssertionException>(() =>
                 _fluentAsserter
                     .Resource(ResourcePath)
-                    .WithParameters("param=wrong+parameter")
+                    .WithUrlParameters("param=wrong+parameter")
                     .WasRequested()
             );
         }
@@ -52,7 +52,7 @@ namespace TinyFakeHostHelper.Tests.Unit
             Assert.DoesNotThrow(() =>
                 _fluentAsserter
                     .Resource(ResourcePath)
-                    .WithParameters(ParamKey + "=" + ParamValue)
+                    .WithUrlParameters(ParamKey + "=" + ParamValue)
                     .WasRequested()
             );
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Extensions;
@@ -24,14 +25,26 @@ namespace TinyFakeHostHelper.Asserters
             return this;
         }
 
+        [Obsolete("Please use \"WithUrlParameters\" instead")]
         public FluentAsserter WithParameters(string urlParameterString)
+        {
+            return WithUrlParameters(urlParameterString);
+        }
+
+        [Obsolete("Please use \"WithUrlParameters\" instead")]
+        public FluentAsserter WithParameters(IEnumerable<Parameter> urlParameters)
+        {
+            return WithUrlParameters(urlParameters);
+        }
+
+        public FluentAsserter WithUrlParameters(string urlParameterString)
         {
             var parameters = urlParameterString.ParseParameters();
 
-            return WithParameters(parameters);
+            return WithUrlParameters(parameters);
         }
 
-        public FluentAsserter WithParameters(IEnumerable<Parameter> urlParameters)
+        public FluentAsserter WithUrlParameters(IEnumerable<Parameter> urlParameters)
         {
             _request.UrlParameters = new Parameters(urlParameters);
 

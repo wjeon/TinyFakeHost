@@ -1,4 +1,6 @@
-﻿namespace TinyFakeHostHelper.RequestResponse
+﻿using System;
+
+namespace TinyFakeHostHelper.RequestResponse
 {
     public class FakeRequest
     {
@@ -9,6 +11,13 @@
         }
 
         public string Path { get; set; }
+
+        [Obsolete("Please use \"UrlParameters\" instead")]
+        public Parameters Parameters
+        {
+            get { return UrlParameters; }
+            set { UrlParameters = value; }
+        }
         public Parameters UrlParameters { get; set; }
         public Parameters FormParameters { get; set; }
 
