@@ -75,6 +75,8 @@
     <Compile Include="RequestResponse\Parameter.cs" />
     <Compile Include="RequestResponse\Parameters.cs" />
     <Compile Include="ServiceModules\FakeServiceModule.cs" />
+    <Compile Include="ServiceModules\IRequestValidator.cs" />
+    <Compile Include="ServiceModules\RequestValidator.cs" />
     <Compile Include="TinyFakeHost.cs" />
     <Compile Include="TinyFakeHostBootstrapper.cs" />
   </ItemGroup>

@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Nancy;
+﻿using Nancy;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Persistence;
@@ -10,14 +9,14 @@ namespace TinyFakeHostHelper.ServiceModules
     public class FakeServiceModule : NancyModule
     {
         private readonly ITinyFakeHostConfiguration _tinyFakeHostConfiguration;
-        private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
         private readonly IRequestedQueryRepository _requestedQueryRepository;
+        private readonly IRequestValidator _requestValidator;
 
-        public FakeServiceModule(ITinyFakeHostConfiguration tinyFakeHostConfiguration, IFakeRequestResponseRepository fakeRequestResponseRepository, IRequestedQueryRepository requestedQueryRepository)
+        public FakeServiceModule(ITinyFakeHostConfiguration tinyFakeHostConfiguration, IRequestedQueryRepository requestedQueryRepository, IRequestValidator requestValidator)
         {
             _tinyFakeHostConfiguration = tinyFakeHostConfiguration;
-            _fakeRequestResponseRepository = fakeRequestResponseRepository;
             _requestedQueryRepository = requestedQueryRepository;
+            _requestValidator = requestValidator;
 
             var routeBuilders = new [] { Delete, Get, Options, Patch, Post, Put };
 
@@ -54,30 +53,7 @@ namespace TinyFakeHostHelper.ServiceModules
 
             _requestedQueryRepository.Add(requestedQuery);
 
-            var response = new Response { ContentType = "application/json" };
-
-            var requestFound = false;
-
-            foreach (var fakeRequestResponse in _fakeRequestResponseRepository.GetAll())
-            {
-                var fakeRequest = fakeRequestResponse.FakeRequest;
-
-                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.UrlParameters.Equals(query) && fakeRequest.FormParameters.Equals(form))
-                {
-                    var fakeResponse = fakeRequestResponse.FakeResponse;
-
-                    if (fakeResponse.MillisecondsSleep > 0)
-                        Thread.Sleep(fakeResponse.MillisecondsSleep);
-
-                    response = fakeResponse.ToNancyResponse();
-                    requestFound = true;
-                    break;
-                }
-            }
-
-            if (!requestFound) response.StatusCode = HttpStatusCode.BadRequest;
-
-            return response;
+            return _requestValidator.GetValidatedFakeResponse(Request.Url, query, form);
         }
     }
 }
