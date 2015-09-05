@@ -67,6 +67,7 @@
     <Compile Include="Persistence\IRequestedQueryRepository.cs" />
     <Compile Include="Persistence\RequestedQueryRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestResponse\Method.cs" />
     <Compile Include="RequestResponse\UrlParameters.cs" />
     <Compile Include="RequestResponse\UrlParameter.cs" />
     <Compile Include="RequestResponse\FakeRequest.cs" />

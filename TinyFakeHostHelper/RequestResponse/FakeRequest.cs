@@ -1,4 +1,5 @@
 ﻿using System;
+using TinyFakeHostHelper.Fakers;
 
 namespace TinyFakeHostHelper.RequestResponse
 {
@@ -6,10 +7,12 @@ namespace TinyFakeHostHelper.RequestResponse
     {
         public FakeRequest()
         {
+            Method = Method.GET;
             UrlParameters = new Parameters();
             FormParameters = new Parameters();
         }
 
+        public Method Method { get; set; }
         public string Path { get; set; }
 
         [Obsolete("Please use \"UrlParameters\" instead")]
@@ -23,7 +26,7 @@ namespace TinyFakeHostHelper.RequestResponse
 
         public override string ToString()
         {
-            return string.Format("Resource Path: {0}, UrlParameters: {1}, FormParameters: {2}", Path, UrlParameters, FormParameters);
+            return string.Format("Method: {0}, Resource Path: {1}, UrlParameters: {2}, FormParameters: {3}", Method, Path, UrlParameters, FormParameters);
         }
     }
 }

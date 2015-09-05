@@ -42,11 +42,13 @@ namespace TinyFakeHostHelper.ServiceModules
 
         private dynamic ReturnFakeResult()
         {
+            var method = (Method)Enum.Parse(typeof(Method), Request.Method);
             var query = Request.Query as DynamicDictionary;
             var form = Request.Form as DynamicDictionary;
 
             var requestedQuery = new FakeRequest
             {
+                Method = method,
                 Path = Request.Url.Path,
                 UrlParameters = query.ToParameters(),
                 FormParameters = form.ToParameters()
@@ -57,7 +59,7 @@ namespace TinyFakeHostHelper.ServiceModules
 
             _requestedQueryRepository.Add(requestedQuery);
 
-            return _requestValidator.GetValidatedFakeResponse(Request.Url, query, form);
+            return _requestValidator.GetValidatedFakeResponse(method, Request.Url, query, form);
         }
     }
 }

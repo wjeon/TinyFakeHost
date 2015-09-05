@@ -25,6 +25,13 @@ namespace TinyFakeHostHelper.Asserters
             return this;
         }
 
+        public FluentAsserter WithMethod(Method method)
+        {
+            _request.Method = method;
+
+            return this;
+        }
+
         [Obsolete("Please use \"WithUrlParameters\" instead")]
         public FluentAsserter WithParameters(string urlParameterString)
         {
@@ -80,6 +87,7 @@ namespace TinyFakeHostHelper.Asserters
 
             if (!requestedQueries.Any(q =>
                 q.Path.Equals(_request.Path) &&
+                q.Method.Equals(_request.Method) &&
                 q.UrlParameters.OrderBy(r => r.Key).SequenceEqual(_request.UrlParameters.OrderBy(r => r.Key)) &&
                 q.FormParameters.OrderBy(r => r.Key).SequenceEqual(_request.FormParameters.OrderBy(r => r.Key)))
             )

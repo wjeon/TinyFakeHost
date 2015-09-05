@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RestSharp;
 using TinyFakeHostHelper.Fakers;
 using TinyFakeHostHelper.RequestResponse;
+using Method = RestSharp.Method;
 
 namespace TinyFakeHostHelper.Tests.Integration
 {
@@ -39,14 +40,13 @@ namespace TinyFakeHostHelper.Tests.Integration
 
             _faker.Fake(f => f
                 .IfRequest(resourcePath)
+                .WithMethod(TinyFakeHostMethod(requestMethod))
                 .WithUrlParameters(urlParameters)
                 .WithFormParameters(formParameters)
                 .ThenReturn(new FakeResponse { ContentType = "application/json", Content = responseContent, StatusCode = ParseHttpStatusCode("OK") })
             );
 
-            var method = (Method)Enum.Parse(typeof(Method), requestMethod);
-
-            var request = new RestRequest(resourcePath, method);
+            var request = new RestRequest(resourcePath, RestSharpMethod(requestMethod));
 
             AddUrlParametersToRequest(request, urlParameters);
             AddFormParametersToRequest(request, formParameters);
@@ -56,6 +56,16 @@ namespace TinyFakeHostHelper.Tests.Integration
             var response = RestClient.Execute(request);
 
             Assert.AreEqual(responseContent, response.Content);
+        }
+
+        private static RequestResponse.Method TinyFakeHostMethod(string method)
+        {
+            return (RequestResponse.Method)Enum.Parse(typeof(RequestResponse.Method), method);
+        }
+
+        private static Method RestSharpMethod(string method)
+        {
+            return (Method)Enum.Parse(typeof(Method), method);
         }
 
         [TestCase("/vendors/9876-5432-1098-7654/products", "type=desk&manufactureYear=2013", @"[{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]", "application/json", "OK")]
@@ -154,6 +164,23 @@ namespace TinyFakeHostHelper.Tests.Integration
         }
 
         [Test]
+        public void When_fake_host_asserts_requested_query_correctly_with_method_and_resource_path_and_form_parameter_it_does_not_throw_exception()
+        {
+            CallFakeService(Method.PUT, ResourcePath, null, "param=value");
+
+            var asserter = _tinyFakeHost.GetAsserter();
+
+            Assert.DoesNotThrow(() =>
+                asserter.Assert(a => a
+                    .Resource(ResourcePath)
+                    .WithMethod(RequestResponse.Method.PUT)
+                    .WithFormParameters("param=value")
+                    .WasRequested()
+                )
+            );
+        }
+
+        [Test]
         public void When_fake_host_asserts_requested_query_incorrectly_with_wrong_resource_path_it_throws_assertion_exception()
         {
             CallFakeService(ResourcePath);
@@ -194,14 +221,21 @@ namespace TinyFakeHostHelper.Tests.Integration
 
         private IRestResponse CallFakeService(string resourcePath, int timeout)
         {
-            return CallFakeService(resourcePath, null, timeout);
+            return CallFakeService(Method.GET, resourcePath, null, null, timeout);
         }
 
-        private IRestResponse CallFakeService(string resourcePath, string urlParameters = null, int timeout = 0)
+        private IRestResponse CallFakeService(string resourcePath, string urlParameters = null, string formParameters = null, int timeout = 0)
         {
-            var request = CreateRequest(resourcePath);
+            return CallFakeService(Method.GET, resourcePath, urlParameters, formParameters, timeout);
+        }
+
+        private IRestResponse CallFakeService(Method method, string resourcePath, string urlParameters = null, string formParameters = null, int timeout = 0)
+        {
+            var request = CreateRequest(resourcePath, method);
 
             AddUrlParametersToRequest(request, urlParameters);
+
+            AddFormParametersToRequest(request, formParameters);
 
             RestClient.Timeout = timeout;
 

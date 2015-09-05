@@ -46,6 +46,13 @@ namespace TinyFakeHostHelper.Fakers
                 );
         }
 
+        public FluentFaker WithMethod(Method method)
+        {
+            _fakeRequestResponse.FakeRequest.Method = method;
+
+            return this;
+        }
+
         [Obsolete("Please use \"WithUrlParameters\" instead")]
         public FluentFaker WithParameters(string urlParameterString)
         {
