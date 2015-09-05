@@ -1,4 +1,5 @@
-﻿using Nancy;
+﻿using System;
+using Nancy;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Persistence;
@@ -50,6 +51,9 @@ namespace TinyFakeHostHelper.ServiceModules
                 UrlParameters = query.ToParameters(),
                 FormParameters = form.ToParameters()
             };
+
+            if (_tinyFakeHostConfiguration.RequestedQueryPrint)
+                Console.WriteLine("Requested Query - {0}", requestedQuery);
 
             _requestedQueryRepository.Add(requestedQuery);
 

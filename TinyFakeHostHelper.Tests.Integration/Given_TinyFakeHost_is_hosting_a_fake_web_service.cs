@@ -51,6 +51,8 @@ namespace TinyFakeHostHelper.Tests.Integration
             AddUrlParametersToRequest(request, urlParameters);
             AddFormParametersToRequest(request, formParameters);
 
+            _tinyFakeHost.RequestedQueryPrint = true;
+
             var response = RestClient.Execute(request);
 
             Assert.AreEqual(responseContent, response.Content);
@@ -66,9 +68,9 @@ namespace TinyFakeHostHelper.Tests.Integration
                 .ThenReturn(new FakeResponse { ContentType = contentType, Content = responseContent, StatusCode = ParseHttpStatusCode(statusCode) })
             );
 
-            var response = CallFakeService(resourcePath, urlParameters);
+            _tinyFakeHost.RequestedQueryPrint = true;
 
-            PrintRequestedQueries();
+            var response = CallFakeService(resourcePath, urlParameters);
 
             Assert.AreEqual(responseContent, response.Content);
         }
@@ -83,9 +85,9 @@ namespace TinyFakeHostHelper.Tests.Integration
                 .ThenReturn(new FakeResponse { ContentType = contentType, Content = responseContent, StatusCode = ParseHttpStatusCode(statusCode) })
             );
 
-            var response = CallFakeService(resourcePath);
+            _tinyFakeHost.RequestedQueryPrint = true;
 
-            PrintRequestedQueries();
+            var response = CallFakeService(resourcePath);
 
             Assert.AreEqual(responseContent, response.Content);
         }
@@ -224,12 +226,6 @@ namespace TinyFakeHostHelper.Tests.Integration
         private static HttpStatusCode ParseHttpStatusCode(string statusCode)
         {
             return (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), statusCode);
-        }
-
-        private void PrintRequestedQueries()
-        {
-            foreach (var requestedQuery in _tinyFakeHost.GetRequestedQueries())
-                Console.WriteLine("Requested query - {0}", requestedQuery);
         }
     }
 }
