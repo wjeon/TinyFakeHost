@@ -16,5 +16,7 @@ namespace TinyFakeHostHelper.Configuration
                     ? DefaultMaximumNumberOfPathSegments : int.Parse(maximumNumberOfPathSegments);
             }
         }
+
+        public bool RequestedQueryPrint { get; set; }
     }
 }

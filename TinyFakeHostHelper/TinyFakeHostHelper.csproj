@@ -57,6 +57,7 @@
     <Compile Include="Configuration\TinyFakeHostConfiguration.cs" />
     <Compile Include="Exceptions\AssertionException.cs" />
     <Compile Include="Exceptions\MaximumNumberOfUrlPathSegmentsException.cs" />
+    <Compile Include="Extensions\DynamicDictionaryExtensions.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Fakers\FluentFaker.cs" />
@@ -66,12 +67,17 @@
     <Compile Include="Persistence\IRequestedQueryRepository.cs" />
     <Compile Include="Persistence\RequestedQueryRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestResponse\Method.cs" />
+    <Compile Include="RequestResponse\UrlParameters.cs" />
+    <Compile Include="RequestResponse\UrlParameter.cs" />
     <Compile Include="RequestResponse\FakeRequest.cs" />
     <Compile Include="RequestResponse\FakeRequestResponse.cs" />
     <Compile Include="RequestResponse\FakeResponse.cs" />
-    <Compile Include="RequestResponse\UrlParameter.cs" />
-    <Compile Include="RequestResponse\UrlParameters.cs" />
+    <Compile Include="RequestResponse\Parameter.cs" />
+    <Compile Include="RequestResponse\Parameters.cs" />
     <Compile Include="ServiceModules\FakeServiceModule.cs" />
+    <Compile Include="ServiceModules\IRequestValidator.cs" />
+    <Compile Include="ServiceModules\RequestValidator.cs" />
     <Compile Include="TinyFakeHost.cs" />
     <Compile Include="TinyFakeHostBootstrapper.cs" />
   </ItemGroup>

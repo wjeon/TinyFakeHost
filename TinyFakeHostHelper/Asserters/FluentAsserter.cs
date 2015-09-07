@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Extensions;
@@ -24,16 +25,49 @@ namespace TinyFakeHostHelper.Asserters
             return this;
         }
 
-        public FluentAsserter WithParameters(string urlParameterString)
+        public FluentAsserter WithMethod(Method method)
         {
-            var parameters = urlParameterString.ParseUrlParameters();
+            _request.Method = method;
 
-            return WithParameters(parameters);
+            return this;
         }
 
-        public FluentAsserter WithParameters(IEnumerable<UrlParameter> urlParameters)
+        [Obsolete("Please use \"WithUrlParameters\" instead")]
+        public FluentAsserter WithParameters(string urlParameterString)
         {
-            _request.Parameters = new UrlParameters(urlParameters);
+            return WithUrlParameters(urlParameterString);
+        }
+
+        [Obsolete("Please use \"WithUrlParameters\" instead")]
+        public FluentAsserter WithParameters(IEnumerable<Parameter> urlParameters)
+        {
+            return WithUrlParameters(urlParameters);
+        }
+
+        public FluentAsserter WithUrlParameters(string urlParameterString)
+        {
+            var parameters = urlParameterString.ParseParameters();
+
+            return WithUrlParameters(parameters);
+        }
+
+        public FluentAsserter WithUrlParameters(IEnumerable<Parameter> urlParameters)
+        {
+            _request.UrlParameters = new Parameters(urlParameters);
+
+            return this;
+        }
+
+        public FluentAsserter WithFormParameters(string formParameterString)
+        {
+            var parameters = formParameterString.ParseParameters();
+
+            return WithFormParameters(parameters);
+        }
+
+        public FluentAsserter WithFormParameters(IEnumerable<Parameter> formParameters)
+        {
+            _request.FormParameters = new Parameters(formParameters);
 
             return this;
         }
@@ -53,7 +87,9 @@ namespace TinyFakeHostHelper.Asserters
 
             if (!requestedQueries.Any(q =>
                 q.Path.Equals(_request.Path) &&
-                q.Parameters.OrderBy(r => r.Key).SequenceEqual(_request.Parameters.OrderBy(r => r.Key)))
+                q.Method.Equals(_request.Method) &&
+                q.UrlParameters.OrderBy(r => r.Key).SequenceEqual(_request.UrlParameters.OrderBy(r => r.Key)) &&
+                q.FormParameters.OrderBy(r => r.Key).SequenceEqual(_request.FormParameters.OrderBy(r => r.Key)))
             )
                 throw new AssertionException(string.Format("The query with {0} was not requested", _request));
         }

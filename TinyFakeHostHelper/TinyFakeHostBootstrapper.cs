@@ -3,6 +3,7 @@ using Nancy.Bootstrapper;
 using Nancy.TinyIoc;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Persistence;
+using TinyFakeHostHelper.ServiceModules;
 
 namespace TinyFakeHostHelper
 {
@@ -26,6 +27,7 @@ namespace TinyFakeHostHelper
             container.Register(_fakeHostConfiguration);
             container.Register<IFakeRequestResponseRepository, FakeRequestResponseRepository>();
             container.Register<IRequestedQueryRepository, RequestedQueryRepository>();
+            container.Register<IRequestValidator, RequestValidator>();
             _container = container;
         }
     }

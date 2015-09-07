@@ -38,10 +38,10 @@ namespace TinyFakeHostHelper.Tests.Unit
                 FakeRequest = new FakeRequest
                 {
                     Path = "/" + key + "/products",
-                    Parameters = new UrlParameters(new List<UrlParameter>
+                    UrlParameters = new Parameters(new List<Parameter>
                     {
-                        new UrlParameter("param-" + key + "-1", "value-" + key + "-1"),
-                        new UrlParameter("param-" + key + "-2", "value-" + key + "-2")
+                        new Parameter("param-" + key + "-1", "value-" + key + "-1"),
+                        new Parameter("param-" + key + "-2", "value-" + key + "-2")
                     })
                 },
                 FakeResponse = new FakeResponse

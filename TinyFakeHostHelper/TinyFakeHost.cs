@@ -20,16 +20,23 @@ namespace TinyFakeHostHelper
         private bool _hostStarted;
         private Guid _hostId;
         private readonly TinyIoCContainer _container;
+        private readonly ITinyFakeHostConfiguration _fakeHostConfig;
 
         public TinyFakeHost(string uri, ITinyFakeHostConfiguration fakeHostConfig = null)
         {
             _hostId = Guid.NewGuid();
-            var bootstrapper = new TinyFakeHostBootstrapper(fakeHostConfig ?? new TinyFakeHostConfiguration());
+            _fakeHostConfig = fakeHostConfig ?? new TinyFakeHostConfiguration();
+            var bootstrapper = new TinyFakeHostBootstrapper(_fakeHostConfig);
             var nancyHostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true } };
 
             _nancyHost = new NancyHost(bootstrapper, nancyHostConfig, new Uri(uri.TrimEnd('/') + "/"));
 
             _container = bootstrapper.GetTinyIoCContainer();
+        }
+
+        public bool RequestedQueryPrint
+        {
+            set { _fakeHostConfig.RequestedQueryPrint = value; }
         }
 
         public void Start()
