@@ -1,4 +1,4 @@
-﻿# TinyFakeHost
+﻿# TinyFakeHost [![Build Status](https://ci.appveyor.com/api/projects/status/9aluqo4apo4jbcd2?svg=true)](https://ci.appveyor.com/project/wjeon/tinyfakehost/branch/master)
 
 ***Summary***
 
