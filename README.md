@@ -80,13 +80,20 @@ public void Your_test_method()
 
     _faker.Fake(f => f
         .IfRequest("/vendors/9876-5432-1098-7654/products")
-        .WithParameters("type=desk&manufactureYear=2013")
+        .WithUrlParameters("type=desk&manufactureYear=2013")
         .ThenReturn(products)
     );
 
     _faker.Fake(f => f
         .IfRequest("/vendors")
         .ThenReturn(vendors)
+    );
+
+    _faker.Fake(f => f
+        .IfRequest("/vendors/6543-2109-8765-4321/products")
+		.WithMethod(Method.POST)
+        .WithFormParameters("type=chair&manufactureYear=2014")
+        .ThenReturn(result)
     );
 
     // your test code . . . .
@@ -121,12 +128,19 @@ public void Your_test_method()
 
     _asserter.Assert(a => a
         .Resource("/vendors/9876-5432-1098-7654/products")
-        .WithParameters("type=desk&manufactureYear=2013")
+        .WithUrlParameters("type=desk&manufactureYear=2013")
         .WasRequested()
     );
 
     _asserter.Assert(a => a
         .Resource("/vendors")
+        .WasRequested()
+    );
+
+    _asserter.Assert(a => a
+        .IfRequest("/vendors/6543-2109-8765-4321/products")
+		.WithMethod(Method.POST)
+        .WithFormParameters("type=chair&manufactureYear=2014")
         .WasRequested()
     );
 }
@@ -138,4 +152,8 @@ private void PrintRequestedQueries()
     foreach (var requestedQuery in _tinyFakeHost.GetRequestedQueries())
         Console.WriteLine("Requested query - {0}", requestedQuery);
 }
+```
+You can also set the RequestedQueryPrint property to true instead. With this way, the requested queries will still be printed directly from the fake host even if there is an error in the service client method call.
+```
+    _tinyFakeHost.RequestedQueryPrint = true;
 ```
