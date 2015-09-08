@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Exceptions;
@@ -45,16 +46,49 @@ namespace TinyFakeHostHelper.Fakers
                 );
         }
 
-        public FluentFaker WithParameters(string urlParameterString)
+        public FluentFaker WithMethod(Method method)
         {
-            var parameters = urlParameterString.ParseUrlParameters();
+            _fakeRequestResponse.FakeRequest.Method = method;
 
-            return WithParameters(parameters);
+            return this;
         }
 
-        public FluentFaker WithParameters(IEnumerable<UrlParameter> urlParameters)
+        [Obsolete("Please use \"WithUrlParameters\" instead")]
+        public FluentFaker WithParameters(string urlParameterString)
         {
-            _fakeRequestResponse.FakeRequest.Parameters = new UrlParameters(urlParameters);
+            return WithUrlParameters(urlParameterString);
+        }
+
+        [Obsolete("Please use \"WithUrlParameters\" instead")]
+        public FluentFaker WithParameters(IEnumerable<Parameter> urlParameters)
+        {
+            return WithUrlParameters(urlParameters);
+        }
+
+        public FluentFaker WithUrlParameters(string urlParameterString)
+        {
+            var parameters = urlParameterString.ParseParameters();
+
+            return WithUrlParameters(parameters);
+        }
+
+        public FluentFaker WithUrlParameters(IEnumerable<Parameter> urlParameters)
+        {
+            _fakeRequestResponse.FakeRequest.UrlParameters = new Parameters(urlParameters);
+
+            return this;
+        }
+
+        public FluentFaker WithFormParameters(string formParameterString)
+        {
+            var parameters = formParameterString.ParseParameters();
+
+            return WithFormParameters(parameters);
+        }
+
+        public FluentFaker WithFormParameters(IEnumerable<Parameter> formParameters)
+        {
+            _fakeRequestResponse.FakeRequest.FormParameters = new Parameters(formParameters);
 
             return this;
         }

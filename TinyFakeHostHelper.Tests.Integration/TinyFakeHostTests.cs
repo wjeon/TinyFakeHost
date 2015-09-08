@@ -17,7 +17,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             const string resourcePath = "/helloWorld";
 
-            _request = CreateRequest(resourcePath);
+            _request = CreateRequest(resourcePath, Method.GET);
         }
 
         [Test]

@@ -1,18 +1,32 @@
-﻿namespace TinyFakeHostHelper.RequestResponse
+﻿using System;
+using TinyFakeHostHelper.Fakers;
+
+namespace TinyFakeHostHelper.RequestResponse
 {
     public class FakeRequest
     {
         public FakeRequest()
         {
-            Parameters = new UrlParameters();
+            Method = Method.GET;
+            UrlParameters = new Parameters();
+            FormParameters = new Parameters();
         }
 
+        public Method Method { get; set; }
         public string Path { get; set; }
-        public UrlParameters Parameters { get; set; }
+
+        [Obsolete("Please use \"UrlParameters\" instead")]
+        public Parameters Parameters
+        {
+            get { return UrlParameters; }
+            set { UrlParameters = value; }
+        }
+        public Parameters UrlParameters { get; set; }
+        public Parameters FormParameters { get; set; }
 
         public override string ToString()
         {
-            return string.Format("Resource Path: {0}, Parameters: {1}", Path, Parameters);
+            return string.Format("Method: {0}, Resource Path: {1}, UrlParameters: {2}, FormParameters: {3}", Method, Path, UrlParameters, FormParameters);
         }
     }
 }

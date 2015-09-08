@@ -6,14 +6,14 @@ using TinyFakeHostHelper.RequestResponse;
 namespace TinyFakeHostHelper.Tests.Unit
 {
     [TestFixture]
-    public class UrlParametersTests
+    public class ParametersTests
     {
         [Test]
-        public void When_UrlParameters_and_dynamic_dictionary_for_requested_parameters_are_equal_Equals_method_returns_true()
+        public void When_Parameters_and_dynamic_dictionary_for_requested_parameters_are_equal_Equals_method_returns_true()
         {
-            var parameters = new List<UrlParameter> { new UrlParameter("KeyA", "ValueA"), new UrlParameter("KeyB", "ValueB") };
+            var parameters = new List<Parameter> { new Parameter("KeyA", "ValueA"), new Parameter("KeyB", "ValueB") };
 
-            var urlParameters = new UrlParameters(parameters);
+            var urlParameters = new Parameters(parameters);
 
             var requestedParameters = new DynamicDictionary { {"KeyB", "ValueB"}, {"KeyA", "ValueA"} };
 

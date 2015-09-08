@@ -31,7 +31,8 @@ namespace TinyFakeHostHelper.Tests.Unit
         public void When_fluent_faker_fakes_request_path_with_parameters_and_fakes_response_it_stores_fake_request_and_response_in_the_repository()
         {
             const string path = "/vendors/9876-5432-1098-7654/products";
-            const string parameters = "type=desk&manufactureYear=2013";
+            const string urlParameters = "type=desk";
+            const string formParameters = "manufactureYear=2013";
             const string content = @"[{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]";
             const string contentType = "application/json";
             const HttpStatusCode statusCode = HttpStatusCode.OK;
@@ -41,10 +42,11 @@ namespace TinyFakeHostHelper.Tests.Unit
 
             _fluentFaker
                 .IfRequest(path)
-                .WithParameters(parameters)
+                .WithUrlParameters(urlParameters)
+                .WithFormParameters(formParameters)
                 .ThenReturn(fakeResponse);
 
-            AssertThatFakeRequestAndResponseAreStored(path, parameters, content, contentType, statusCode, reasonPhrase);
+            AssertThatFakeRequestAndResponseAreStored(path, urlParameters, formParameters, content, contentType, statusCode, reasonPhrase);
         }
 
         [Test]
@@ -62,7 +64,7 @@ namespace TinyFakeHostHelper.Tests.Unit
                 .IfRequest(path)
                 .ThenReturn(fakeResponse);
 
-            AssertThatFakeRequestAndResponseAreStored(path, null, content, contentType, statusCode, reasonPhrase);
+            AssertThatFakeRequestAndResponseAreStored(path, null, null, content, contentType, statusCode, reasonPhrase);
         }
 
         [TestCase("/vendors")]
@@ -87,24 +89,24 @@ namespace TinyFakeHostHelper.Tests.Unit
         }
 
         private void AssertThatFakeRequestAndResponseAreStored
-            (string path, string parameters, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
+            (string path, string urlParameters, string formParameters, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
         {
             var requestsResponses = _repository.GetAll();
 
             Assert.IsTrue(requestsResponses != null && requestsResponses.Count() == 1);
 
-            var expectedRequestResponse = CreateFakeRequestResponse(path, parameters, content, contentType, statusCode,
+            var expectedRequestResponse = CreateFakeRequestResponse(path, urlParameters, formParameters, content, contentType, statusCode,
                                                                     reasonPhrase);
 
             Assert.IsTrue(requestsResponses.First().IsEqualTo(expectedRequestResponse));
         }
 
         private static FakeRequestResponse CreateFakeRequestResponse
-            (string path, string parameters, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
+            (string path, string urlParameters, string formParameters, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
         {
             return new FakeRequestResponse
             {
-                FakeRequest = new FakeRequest { Path = path, Parameters = ParseUrlParameters(parameters) },
+                FakeRequest = new FakeRequest { Path = path, UrlParameters = ParseParameters(urlParameters), FormParameters = ParseParameters(formParameters) },
                 FakeResponse = CreateFakeResponse(content, contentType, statusCode, reasonPhrase)
             };
         }
@@ -120,14 +122,14 @@ namespace TinyFakeHostHelper.Tests.Unit
             };
         }
 
-        private static UrlParameters ParseUrlParameters(string urlParameterString)
+        private static Parameters ParseParameters(string urlParameterString)
         {
             return string.IsNullOrEmpty(urlParameterString)
-                ? new UrlParameters()
-                : new UrlParameters(
+                ? new Parameters()
+                : new Parameters(
                     urlParameterString.Split('&')
                     .Select(urlParam => urlParam.Split('='))
-                    .Select(param => new UrlParameter(param[0], param[1]))
+                    .Select(param => new Parameter(param[0], param[1]))
                 );
         }
     }

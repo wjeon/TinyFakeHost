@@ -7,7 +7,7 @@
     <owners>WJ</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Tiny host that fakes services for test</description>
-    <releaseNotes>Support requested query assertion, .NET 4.0 and root path not supported bug fix.</releaseNotes>
+    <releaseNotes>Support DELETE, OPTIONS, PATCH, POST and PUT methods in addition to GET method, support both url and form parameters.</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>Tiny Fake Host</tags>
     <dependencies>

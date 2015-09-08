@@ -15,9 +15,9 @@ namespace TinyFakeHostHelper.Tests.Integration
             RestClient = new RestClient(BaseUri);
         }
 
-        protected IRestRequest CreateRequest(string resourcePath)
+        protected IRestRequest CreateRequest(string resourcePath, Method method)
         {
-            return new RestRequest(resourcePath, Method.GET);
+            return new RestRequest(resourcePath, method);
         }
     }
 }

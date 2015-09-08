@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TinyFakeHostHelper.RequestResponse;
 
@@ -6,11 +7,20 @@ namespace TinyFakeHostHelper.Extensions
 {
     public static class StringExtensions
     {
-        public static IEnumerable<UrlParameter> ParseUrlParameters(this string urlParameterString)
+        [Obsolete("Please use \"ParseParameters\" instead")]
+        public static IEnumerable<Parameter> ParseUrlParameters(this string parameterString)
         {
-            var parameters = urlParameterString.Split('&')
+            return ParseParameters(parameterString);
+        }
+
+        public static IEnumerable<Parameter> ParseParameters(this string parameterString)
+        {
+            if (string.IsNullOrEmpty(parameterString))
+                return new List<Parameter>();
+
+            var parameters = parameterString.Split('&')
                 .Select(urlParam => urlParam.Split('='))
-                .Select(param => new UrlParameter(param[0], param[1]));
+                .Select(param => new Parameter(param[0], param[1]));
 
             return parameters;
         }

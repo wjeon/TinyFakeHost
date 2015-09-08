@@ -12,9 +12,12 @@ namespace TinyFakeHostHelper.Tests.Unit
     {
         private IRequestedQueryRepository _requestedQueryRepository;
         private FluentAsserter _fluentAsserter;
-        private const string ResourcePath = "/resourcePath";
-        private const string ParamKey = "param";
-        private const string ParamValue = "value";
+        private const string ResourcePathWihUrlParamOnly = "/resourcePathWihUrlParamOnly";
+        private const string ResourcePathWihFormParamOnly = "/resourcePathWihFormParamOnly";
+        private const string UrlParamKey = "urlparam";
+        private const string UrlParamValue = "urlvalue";
+        private const string FormParamKey = "formparam";
+        private const string FormParamValue = "formvalue";
         private const string ResourcePathOnly = "/resourcePathOnly";
 
         [SetUp]
@@ -40,19 +43,30 @@ namespace TinyFakeHostHelper.Tests.Unit
         {
             Assert.Throws<Exceptions.AssertionException>(() =>
                 _fluentAsserter
-                    .Resource(ResourcePath)
-                    .WithParameters("param=wrong+parameter")
+                    .Resource(ResourcePathWihUrlParamOnly)
+                    .WithUrlParameters("param=wrong+parameter")
                     .WasRequested()
             );
         }
 
         [Test]
-        public void When_FluentAsserter_asserts_requested_query_correctly_with_resource_path_and_parameter_it_does_not_throw_exception()
+        public void When_FluentAsserter_asserts_requested_query_correctly_with_resource_path_and_url_parameter_it_does_not_throw_exception()
         {
             Assert.DoesNotThrow(() =>
                 _fluentAsserter
-                    .Resource(ResourcePath)
-                    .WithParameters(ParamKey + "=" + ParamValue)
+                    .Resource(ResourcePathWihUrlParamOnly)
+                    .WithUrlParameters(UrlParamKey + "=" + UrlParamValue)
+                    .WasRequested()
+            );
+        }
+
+        [Test]
+        public void When_FluentAsserter_asserts_requested_query_correctly_with_resource_path_and_form_parameter_it_does_not_throw_exception()
+        {
+            Assert.DoesNotThrow(() =>
+                _fluentAsserter
+                    .Resource(ResourcePathWihFormParamOnly)
+                    .WithFormParameters(FormParamKey + "=" + FormParamValue)
                     .WasRequested()
             );
         }
@@ -71,17 +85,24 @@ namespace TinyFakeHostHelper.Tests.Unit
         {
             _requestedQueryRepository = MockRepository.GenerateStub<IRequestedQueryRepository>();
 
-            var requestedQueryWithResourcePathAndParameter = new FakeRequest
+            var requestedQueryWithResourcePathAndUrlParameter = new FakeRequest
             {
-                Path = ResourcePath,
-                Parameters = new UrlParameters(new List<UrlParameter> { new UrlParameter(ParamKey, ParamValue) })
+                Path = ResourcePathWihUrlParamOnly,
+                UrlParameters = new Parameters(new List<Parameter> { new Parameter(UrlParamKey, UrlParamValue) })
+            };
+
+            var requestedQueryWithResourcePathAndFormParameter = new FakeRequest
+            {
+                Path = ResourcePathWihFormParamOnly,
+                FormParameters = new Parameters(new List<Parameter> { new Parameter(FormParamKey, FormParamValue) })
             };
 
             var requestedQueryWithResourcePathOnly = new FakeRequest { Path = ResourcePathOnly };
 
             var requestedQueries = new List<FakeRequest>
             {
-                requestedQueryWithResourcePathAndParameter,
+                requestedQueryWithResourcePathAndUrlParameter,
+                requestedQueryWithResourcePathAndFormParameter,
                 requestedQueryWithResourcePathOnly
             };
 

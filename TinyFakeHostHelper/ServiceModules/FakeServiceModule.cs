@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System;
 using Nancy;
 using TinyFakeHostHelper.Configuration;
+using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 
@@ -10,67 +10,56 @@ namespace TinyFakeHostHelper.ServiceModules
     public class FakeServiceModule : NancyModule
     {
         private readonly ITinyFakeHostConfiguration _tinyFakeHostConfiguration;
-        private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
         private readonly IRequestedQueryRepository _requestedQueryRepository;
+        private readonly IRequestValidator _requestValidator;
 
-        public FakeServiceModule(ITinyFakeHostConfiguration tinyFakeHostConfiguration, IFakeRequestResponseRepository fakeRequestResponseRepository, IRequestedQueryRepository requestedQueryRepository)
+        public FakeServiceModule(ITinyFakeHostConfiguration tinyFakeHostConfiguration, IRequestedQueryRepository requestedQueryRepository, IRequestValidator requestValidator)
         {
             _tinyFakeHostConfiguration = tinyFakeHostConfiguration;
-            _fakeRequestResponseRepository = fakeRequestResponseRepository;
             _requestedQueryRepository = requestedQueryRepository;
+            _requestValidator = requestValidator;
 
-            BuildRoutesForGetRequest();
+            var routeBuilders = new [] { Delete, Get, Options, Patch, Post, Put };
+
+            foreach (var routeBuilder in routeBuilders)
+            {
+                BuildRoutesForRequest(routeBuilder);
+            }
         }
 
-        private void BuildRoutesForGetRequest()
+        private void BuildRoutesForRequest(RouteBuilder routeBuilder)
         {
-            Get["/"] = p => ReturnFakeResult();
+            routeBuilder["/"] = p => ReturnFakeResult();
 
             var segments = string.Empty;
 
             for (var i = 0; i < _tinyFakeHostConfiguration.MaximumNumberOfUrlPathSegments; i++)
             {
                 segments += "/{segment" + i + "}";
-                Get[segments] = p => ReturnFakeResult();
+                routeBuilder[segments] = p => ReturnFakeResult();
             }
         }
 
         private dynamic ReturnFakeResult()
         {
+            var method = (Method)Enum.Parse(typeof(Method), Request.Method);
             var query = Request.Query as DynamicDictionary;
+            var form = Request.Form as DynamicDictionary;
 
             var requestedQuery = new FakeRequest
             {
+                Method = method,
                 Path = Request.Url.Path,
-                Parameters = new UrlParameters(query.Keys.Select(key => new UrlParameter(key, query[key].ToString())))
+                UrlParameters = query.ToParameters(),
+                FormParameters = form.ToParameters()
             };
+
+            if (_tinyFakeHostConfiguration.RequestedQueryPrint)
+                Console.WriteLine("Requested Query - {0}", requestedQuery);
 
             _requestedQueryRepository.Add(requestedQuery);
 
-            var response = new Response { ContentType = "application/json" };
-
-            var requestFound = false;
-
-            foreach (var fakeRequestResponse in _fakeRequestResponseRepository.GetAll())
-            {
-                var fakeRequest = fakeRequestResponse.FakeRequest;
-
-                if (fakeRequest.Path.Equals(Request.Url.Path) && fakeRequest.Parameters.Equals(query))
-                {
-                    var fakeResponse = fakeRequestResponse.FakeResponse;
-
-                    if (fakeResponse.MillisecondsSleep > 0)
-                        Thread.Sleep(fakeResponse.MillisecondsSleep);
-
-                    response = fakeResponse.ToNancyResponse();
-                    requestFound = true;
-                    break;
-                }
-            }
-
-            if (!requestFound) response.StatusCode = HttpStatusCode.BadRequest;
-
-            return response;
+            return _requestValidator.GetValidatedFakeResponse(method, Request.Url, query, form);
         }
     }
 }
