@@ -138,7 +138,7 @@ public void Your_test_method()
     );
 
     _asserter.Assert(a => a
-        .IfRequest("/vendors/6543-2109-8765-4321/products")
+        .Resource("/vendors/6543-2109-8765-4321/products")
 		.WithMethod(Method.POST)
         .WithFormParameters("type=chair&manufactureYear=2014")
         .WasRequested()
