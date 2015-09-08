@@ -64,6 +64,7 @@
     <Compile Include="Helpers\AppSettingHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestedQueryRepositoryTests.cs" />
+    <Compile Include="RequestValidatorTests.cs" />
     <Compile Include="TinyFakeHostConfigurationTests.cs" />
     <Compile Include="TinyFakeHostTests.cs" />
     <Compile Include="ParametersTests.cs" />

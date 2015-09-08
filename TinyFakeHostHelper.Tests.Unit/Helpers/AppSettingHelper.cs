@@ -19,7 +19,7 @@ namespace TinyFakeHostHelper.Tests.Unit.Helpers
 
         private static void UpdateAppSettingInMemory(AppSettingUpdateType updateType, string key, string value)
         {
-            var configSystem = new ConfigeSystem();
+            var configSystem = new ConfigSystem();
 
             if (updateType == AppSettingUpdateType.Remove)
                 configSystem.Settings.Remove(key);
@@ -41,7 +41,7 @@ namespace TinyFakeHostHelper.Tests.Unit.Helpers
             Remove
         }
 
-        private class ConfigeSystem : IInternalConfigSystem
+        private class ConfigSystem : IInternalConfigSystem
         {
             public readonly NameValueCollection Settings = new NameValueCollection();
 
