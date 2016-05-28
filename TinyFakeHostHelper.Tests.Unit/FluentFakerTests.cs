@@ -33,6 +33,7 @@ namespace TinyFakeHostHelper.Tests.Unit
             const string path = "/vendors/9876-5432-1098-7654/products";
             const string urlParameters = "type=desk";
             const string formParameters = "manufactureYear=2013";
+            const string body = "{\"RequestedBody\":\"Test Body\"}";
             const string content = @"[{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]";
             const string contentType = "application/json";
             const HttpStatusCode statusCode = HttpStatusCode.OK;
@@ -44,9 +45,10 @@ namespace TinyFakeHostHelper.Tests.Unit
                 .IfRequest(path)
                 .WithUrlParameters(urlParameters)
                 .WithFormParameters(formParameters)
+                .WithBody(body)
                 .ThenReturn(fakeResponse);
 
-            AssertThatFakeRequestAndResponseAreStored(path, urlParameters, formParameters, content, contentType, statusCode, reasonPhrase);
+            AssertThatFakeRequestAndResponseAreStored(path, urlParameters, formParameters, body, content, contentType, statusCode, reasonPhrase);
         }
 
         [Test]
@@ -64,7 +66,7 @@ namespace TinyFakeHostHelper.Tests.Unit
                 .IfRequest(path)
                 .ThenReturn(fakeResponse);
 
-            AssertThatFakeRequestAndResponseAreStored(path, null, null, content, contentType, statusCode, reasonPhrase);
+            AssertThatFakeRequestAndResponseAreStored(path, null, null, string.Empty, content, contentType, statusCode, reasonPhrase);
         }
 
         [TestCase("/vendors")]
@@ -89,24 +91,24 @@ namespace TinyFakeHostHelper.Tests.Unit
         }
 
         private void AssertThatFakeRequestAndResponseAreStored
-            (string path, string urlParameters, string formParameters, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
+            (string path, string urlParameters, string formParameters, string body, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
         {
             var requestsResponses = _repository.GetAll();
 
             Assert.IsTrue(requestsResponses != null && requestsResponses.Count() == 1);
 
-            var expectedRequestResponse = CreateFakeRequestResponse(path, urlParameters, formParameters, content, contentType, statusCode,
+            var expectedRequestResponse = CreateFakeRequestResponse(path, urlParameters, formParameters, body, content, contentType, statusCode,
                                                                     reasonPhrase);
 
             Assert.IsTrue(requestsResponses.First().IsEqualTo(expectedRequestResponse));
         }
 
         private static FakeRequestResponse CreateFakeRequestResponse
-            (string path, string urlParameters, string formParameters, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
+            (string path, string urlParameters, string formParameters, string body, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
         {
             return new FakeRequestResponse
             {
-                FakeRequest = new FakeRequest { Path = path, UrlParameters = ParseParameters(urlParameters), FormParameters = ParseParameters(formParameters) },
+                FakeRequest = new FakeRequest { Path = path, UrlParameters = ParseParameters(urlParameters), FormParameters = ParseParameters(formParameters), Body = body },
                 FakeResponse = CreateFakeResponse(content, contentType, statusCode, reasonPhrase)
             };
         }

@@ -93,6 +93,13 @@ namespace TinyFakeHostHelper.Fakers
             return this;
         }
 
+        public FluentFaker WithBody(string body)
+        {
+            _fakeRequestResponse.FakeRequest.Body = body;
+
+            return this;
+        }
+
         public FluentFaker ThenReturn(FakeResponse fakeResponse)
         {
             _fakeRequestResponse.FakeResponse = fakeResponse;

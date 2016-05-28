@@ -10,6 +10,7 @@ namespace TinyFakeHostHelper.Tests.Unit.Extensions
             return
                 requestResponse.FakeRequest.Path == otherRequestResponse.FakeRequest.Path &&
                 requestResponse.FakeRequest.UrlParameters.SequenceEqual(otherRequestResponse.FakeRequest.UrlParameters) &&
+                requestResponse.FakeRequest.Body == otherRequestResponse.FakeRequest.Body &&
                 requestResponse.FakeResponse.Content == otherRequestResponse.FakeResponse.Content &&
                 requestResponse.FakeResponse.ContentType == otherRequestResponse.FakeResponse.ContentType &&
                 requestResponse.FakeResponse.StatusCode == otherRequestResponse.FakeResponse.StatusCode;
