@@ -1,5 +1,6 @@
 ﻿using System;
 using Nancy;
+using Nancy.Extensions;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Persistence;
@@ -45,13 +46,15 @@ namespace TinyFakeHostHelper.ServiceModules
             var method = (Method)Enum.Parse(typeof(Method), Request.Method);
             var query = Request.Query as DynamicDictionary;
             var form = Request.Form as DynamicDictionary;
+            var body = Request.Body.AsString();
 
             var requestedQuery = new FakeRequest
             {
                 Method = method,
                 Path = Request.Url.Path,
                 UrlParameters = query.ToParameters(),
-                FormParameters = form.ToParameters()
+                FormParameters = form.ToParameters(),
+                Body = body
             };
 
             if (_tinyFakeHostConfiguration.RequestedQueryPrint)
@@ -59,7 +62,7 @@ namespace TinyFakeHostHelper.ServiceModules
 
             _requestedQueryRepository.Add(requestedQuery);
 
-            return _requestValidator.GetValidatedFakeResponse(method, Request.Url, query, form);
+            return _requestValidator.GetValidatedFakeResponse(method, Request.Url, query, form, body);
         }
     }
 }

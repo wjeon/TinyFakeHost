@@ -14,7 +14,7 @@ namespace TinyFakeHostHelper.ServiceModules
             _fakeRequestResponseRepository = fakeRequestResponseRepository;
         }
 
-        public Response GetValidatedFakeResponse(Method method, Url url, DynamicDictionary query, DynamicDictionary form)
+        public Response GetValidatedFakeResponse(Method method, Url url, DynamicDictionary query, DynamicDictionary form, string body)
         {
             var response = new Response { ContentType = "application/json" };
 
@@ -25,7 +25,8 @@ namespace TinyFakeHostHelper.ServiceModules
                 var fakeRequest = fakeRequestResponse.FakeRequest;
 
                 if (fakeRequest.Method.Equals(method) && fakeRequest.Path.Equals(url.Path) &&
-                    fakeRequest.UrlParameters.Equals(query) && fakeRequest.FormParameters.Equals(form))
+                    fakeRequest.UrlParameters.Equals(query) && fakeRequest.FormParameters.Equals(form) &&
+                    (fakeRequest.Body ?? string.Empty) == (body ?? string.Empty))
                 {
                     var fakeResponse = fakeRequestResponse.FakeResponse;
 
