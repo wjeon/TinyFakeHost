@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("WJ")]
 [assembly: AssemblyProduct("TinyFakeHost")]
-[assembly: AssemblyCopyright("Copyright © WJ 2015")]
+[assembly: AssemblyCopyright("Copyright © WJ 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
