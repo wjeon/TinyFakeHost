@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Net;
 using NUnit.Framework;
+using Rhino.Mocks;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Fakers;
@@ -97,6 +98,17 @@ namespace TinyFakeHostHelper.Tests.Unit
             var lastCreatedFakeId = _repository.GetAll().ToList().Find(a => a.FakeRequest.Path == "/pathForSecondFake").Id;
 
             Assert.AreEqual(_fluentFaker.LastCreatedFakeId, lastCreatedFakeId);
+        }
+
+        [Test]
+        public void DeleteAllFakes_method_calls_DeleteAll_method_in_FakeRequestResponseRepository()
+        {
+            var repository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
+            _fluentFaker = new FluentFaker(repository, _configuration);
+
+            _fluentFaker.DeleteAllFakes();
+
+            repository.AssertWasCalled(r => r.DeleteAll());
         }
 
         private void AssertThatFakeRequestAndResponseAreStored
