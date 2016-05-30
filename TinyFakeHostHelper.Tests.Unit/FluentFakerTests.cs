@@ -1,11 +1,13 @@
 ﻿using System.Linq;
 using System.Net;
 using NUnit.Framework;
+using Rhino.Mocks;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Fakers;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
+using TinyFakeHostHelper.Supports;
 using TinyFakeHostHelper.Tests.Unit.Extensions;
 using TinyFakeHostHelper.Tests.Unit.Helpers;
 
@@ -21,7 +23,8 @@ namespace TinyFakeHostHelper.Tests.Unit
         [SetUp]
         public void SetUp()
         {
-            _repository = new FakeRequestResponseRepository();
+            var dateTimeProvider = MockRepository.GenerateMock<IDateTimeProvider>();
+            _repository = new FakeRequestResponseRepository(dateTimeProvider);
             _configuration = new TinyFakeHostConfiguration();
 
             _fluentFaker = new FluentFaker(_repository, _configuration);
