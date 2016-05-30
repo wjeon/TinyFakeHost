@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.RequestResponse;
@@ -8,18 +9,18 @@ namespace TinyFakeHostHelper.Persistence
 {
     public class FakeRequestResponseRepository : IFakeRequestResponseRepository
     {
-        private readonly IList<FakeRequestResponse> _fakeRequestRequestResponses;
+        private readonly IList<FakeRequestResponse> _fakeRequestResponses;
         private readonly IDateTimeProvider _dateTimeProvider;
 
         public FakeRequestResponseRepository(IDateTimeProvider dateTimeProvider)
         {
             _dateTimeProvider = dateTimeProvider;
-            _fakeRequestRequestResponses = new List<FakeRequestResponse>();
+            _fakeRequestResponses = new List<FakeRequestResponse>();
         }
 
         public void Add(FakeRequestResponse fakeRequestResponse)
         {
-            if (_fakeRequestRequestResponses.Any(f => f.Id == fakeRequestResponse.Id))
+            if (_fakeRequestResponses.Any(f => f.Id == fakeRequestResponse.Id))
                 throw new UniqueIdException(
                     string.Format(
                         "Id of FakeRequestResponse '{0}' already exists in stored fakes",
@@ -29,12 +30,20 @@ namespace TinyFakeHostHelper.Persistence
 
             fakeRequestResponse.Created = _dateTimeProvider.UtcNow;
 
-            _fakeRequestRequestResponses.Add(fakeRequestResponse);
+            _fakeRequestResponses.Add(fakeRequestResponse);
         }
 
         public IEnumerable<FakeRequestResponse> GetAll()
         {
-            return _fakeRequestRequestResponses;
+            return _fakeRequestResponses;
+        }
+
+        public void DeleteById(Guid id)
+        {
+            var fakeRequestResponse = _fakeRequestResponses.ToList().Find(f => f.Id == id);
+
+            if (fakeRequestResponse != null)
+                _fakeRequestResponses.Remove(fakeRequestResponse);
         }
     }
 }

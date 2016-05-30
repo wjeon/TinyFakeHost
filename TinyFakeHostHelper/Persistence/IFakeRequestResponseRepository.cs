@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TinyFakeHostHelper.RequestResponse;
 
@@ -7,5 +8,6 @@ namespace TinyFakeHostHelper.Persistence
     {
         void Add(FakeRequestResponse fakeRequestResponse);
         IEnumerable<FakeRequestResponse> GetAll();
+        void DeleteById(Guid id);
     }
 }
