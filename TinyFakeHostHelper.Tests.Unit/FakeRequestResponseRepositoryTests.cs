@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using NUnit.Framework;
 using Rhino.Mocks;
+using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 using TinyFakeHostHelper.Supports;
@@ -53,6 +54,16 @@ namespace TinyFakeHostHelper.Tests.Unit
 
             var fakes = _fakeRequestResponseRepository.GetAll();
             Assert.AreEqual(fakes.First().Created, currentTime);
+        }
+
+        public void When_FakeRequestResponse_with_existing_id_is_added_it_throws_unique_id_exception()
+        {
+            var fakeRequestResponse = new FakeRequestResponse();
+            _fakeRequestResponseRepository.Add(fakeRequestResponse);
+
+            Assert.Throws<UniqueIdException>(() =>
+                _fakeRequestResponseRepository.Add(fakeRequestResponse)
+            );
         }
 
         private static FakeRequestResponse CreateFakeRequestResponseWith(string key, HttpStatusCode statusCode)

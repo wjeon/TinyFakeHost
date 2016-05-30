@@ -94,6 +94,17 @@ namespace TinyFakeHostHelper.Tests.Unit
             AppSettingHelper.RemoveAppSettingInMemory("MaximumNumberOfPathSegments");
         }
 
+        [Test]
+        public void LastCreatedFakeId_property_returns_id_of_last_created_fake()
+        {
+            _fluentFaker.IfRequest("/pathForFirstFake").ThenReturn(new FakeResponse());
+            _fluentFaker.IfRequest("/pathForSecondFake").ThenReturn(new FakeResponse());
+
+            var lastCreatedFakeId = _repository.GetAll().ToList().Find(a => a.FakeRequest.Path == "/pathForSecondFake").Id;
+
+            Assert.AreEqual(_fluentFaker.LastCreatedFakeId, lastCreatedFakeId);
+        }
+
         private void AssertThatFakeRequestAndResponseAreStored
             (Method method, string path, string urlParameters, string formParameters, string body, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
         {

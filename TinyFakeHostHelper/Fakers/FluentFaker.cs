@@ -14,6 +14,8 @@ namespace TinyFakeHostHelper.Fakers
         private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
         private readonly ITinyFakeHostConfiguration _configuration;
         private FakeRequestResponse _fakeRequestResponse;
+        private Guid? _lastCreatedFakeId;
+
         private const string MaxNumberOfSegmentsExceptionMessage =
             "The number of segments of the requested url path is bigger than MaximumNumberOfUrlPathSegments setting " +
             "in the configuration or bigger than the default maximum number of url path segments";
@@ -106,9 +108,16 @@ namespace TinyFakeHostHelper.Fakers
 
             _fakeRequestResponseRepository.Add(_fakeRequestResponse);
 
+            _lastCreatedFakeId = _fakeRequestResponse.Id;
+
             ClearRequestResponse();
 
             return this;
+        }
+
+        public Guid? LastCreatedFakeId
+        {
+            get { return _lastCreatedFakeId; }
         }
 
         private void ClearRequestResponse()
