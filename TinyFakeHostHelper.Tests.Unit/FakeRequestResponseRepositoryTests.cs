@@ -41,12 +41,29 @@ namespace TinyFakeHostHelper.Tests.Unit
         [Test]
         public void When_FakeRequestResponse_with_existing_id_is_added_it_throws_unique_id_exception()
         {
-            var fakeRequestResponse = new FakeRequestResponse();
-            _fakeRequestResponseRepository.Add(fakeRequestResponse);
+            var fakeRequestResponse = AddFakeRequestResponse();
 
             Assert.Throws<UniqueIdException>(() =>
                 _fakeRequestResponseRepository.Add(fakeRequestResponse)
             );
+        }
+
+        [Test]
+        public void DeleteById_method_deletes_FakeRequestResponse_by_its_id()
+        {
+            var fakeRequestResponse = AddFakeRequestResponse();
+            var id = fakeRequestResponse.Id;
+            Assert.IsTrue(_fakeRequestResponseRepository.GetAll().Any(f => f.Id == id));
+
+            _fakeRequestResponseRepository.DeleteById(id);
+            Assert.IsFalse(_fakeRequestResponseRepository.GetAll().Any(f => f.Id == id));
+        }
+
+        private FakeRequestResponse AddFakeRequestResponse()
+        {
+            var fakeRequestResponse = new FakeRequestResponse();
+            _fakeRequestResponseRepository.Add(fakeRequestResponse);
+            return fakeRequestResponse;
         }
 
         private static FakeRequestResponse CreateFakeRequestResponseWith(string key, HttpStatusCode statusCode)

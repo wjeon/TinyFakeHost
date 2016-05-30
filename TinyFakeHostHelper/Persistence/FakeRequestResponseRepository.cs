@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.RequestResponse;
@@ -30,6 +31,14 @@ namespace TinyFakeHostHelper.Persistence
         public IEnumerable<FakeRequestResponse> GetAll()
         {
             return _fakeRequestResponses;
+        }
+
+        public void DeleteById(Guid id)
+        {
+            var fakeRequestResponse = _fakeRequestResponses.ToList().Find(f => f.Id == id);
+
+            if (fakeRequestResponse != null)
+                _fakeRequestResponses.Remove(fakeRequestResponse);
         }
     }
 }
