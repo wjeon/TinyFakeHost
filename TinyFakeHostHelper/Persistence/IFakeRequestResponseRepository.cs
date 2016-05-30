@@ -7,5 +7,6 @@ namespace TinyFakeHostHelper.Persistence
     {
         void Add(FakeRequestResponse fakeRequestResponse);
         IEnumerable<FakeRequestResponse> GetAll();
+        void DeleteAll();
     }
 }

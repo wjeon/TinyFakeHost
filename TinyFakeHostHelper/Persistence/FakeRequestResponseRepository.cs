@@ -7,7 +7,7 @@ namespace TinyFakeHostHelper.Persistence
 {
     public class FakeRequestResponseRepository : IFakeRequestResponseRepository
     {
-        private readonly IList<FakeRequestResponse> _fakeRequestRequestResponses;
+        private IList<FakeRequestResponse> _fakeRequestRequestResponses;
 
         public FakeRequestResponseRepository()
         {
@@ -30,6 +30,11 @@ namespace TinyFakeHostHelper.Persistence
         public IEnumerable<FakeRequestResponse> GetAll()
         {
             return _fakeRequestRequestResponses;
+        }
+
+        public void DeleteAll()
+        {
+            _fakeRequestRequestResponses = new List<FakeRequestResponse>();
         }
     }
 }
