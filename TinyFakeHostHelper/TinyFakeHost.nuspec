@@ -7,8 +7,8 @@
     <owners>WJ</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Tiny host that fakes services for test</description>
-    <releaseNotes>Support DELETE, OPTIONS, PATCH, POST and PUT methods in addition to GET method, support both url and form parameters.</releaseNotes>
-    <copyright>Copyright 2015</copyright>
+    <releaseNotes>Support faking by request body and deleting last created fake.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
     <tags>Tiny Fake Host</tags>
     <dependencies>
       <dependency id="Nancy.Hosting.Self" version="1.0.0" />
