@@ -118,6 +118,18 @@ namespace TinyFakeHostHelper.Tests.Unit
             repository.AssertWasCalled(r => r.DeleteById(id));
         }
 
+        [Test]
+        public void When_delete_fake_by_last_created_fake_id_it_also_sets_the_stored_last_created_fake_id_to_null()
+        {
+            _fluentFaker.IfRequest("/pathForLastFake").ThenReturn(new FakeResponse());
+            Assert.IsNotNull(_fluentFaker.LastCreatedFakeId);
+            var lastCreatedFakeId = _fluentFaker.LastCreatedFakeId;
+
+            _fluentFaker.DeleteFakeById(lastCreatedFakeId.Value);
+
+            Assert.IsNull(_fluentFaker.LastCreatedFakeId);
+        }
+
         private void AssertThatFakeRequestAndResponseAreStored
             (Method method, string path, string urlParameters, string formParameters, string body, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
         {
