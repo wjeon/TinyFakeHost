@@ -4,6 +4,7 @@ using Nancy.TinyIoc;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.ServiceModules;
+using TinyFakeHostHelper.Supports;
 
 namespace TinyFakeHostHelper
 {
@@ -25,6 +26,7 @@ namespace TinyFakeHostHelper
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
             container.Register(_fakeHostConfiguration);
+            container.Register<IDateTimeProvider, DateTimeProvider>();
             container.Register<IFakeRequestResponseRepository, FakeRequestResponseRepository>();
             container.Register<IRequestedQueryRepository, RequestedQueryRepository>();
             container.Register<IRequestValidator, RequestValidator>();

@@ -88,7 +88,33 @@ namespace TinyFakeHostHelper.Tests.Unit
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
         }
 
-        private static IEnumerable<FakeRequestResponse> CreateFakeRequestResponses(string expectedMethod, string expectedPath, string expectedUrlParameters, string expectedFormParameters, string expectedBody, FakeResponse fakeResponse = null)
+        [Test]
+        public void GetValidatedFakeResponse_method_validates_by_last_created_fake_first()
+        {
+            var responseWithBadRequestStatus = new FakeResponse { StatusCode = System.Net.HttpStatusCode.BadRequest };
+            var responseWithOkStatus = new FakeResponse();
+            var emptyBody = string.Empty;
+
+            var fakeRequestResponses = CreateFakeRequestResponses(
+                RequestedMethod.ToString(), RequestedPath, RequestedUrlParams, RequestedFormParams, emptyBody, responseWithBadRequestStatus, new DateTime(2016, 5, 28)
+            ).ToList();
+            fakeRequestResponses.AddRange(CreateFakeRequestResponses(
+                RequestedMethod.ToString(), RequestedPath, RequestedUrlParams, RequestedFormParams, emptyBody, responseWithOkStatus, new DateTime(2016, 5, 29)
+            ));
+
+            _fakeRequestResponseRepository.Stub(s => s.GetAll()).Return(fakeRequestResponses);
+
+            var response = _requestValidator.GetValidatedFakeResponse(
+                RequestedMethod, new Url { Path = RequestedPath },
+                DynamicDictionaryParseParameters(RequestedUrlParams),
+                DynamicDictionaryParseParameters(RequestedFormParams),
+                emptyBody
+            );
+
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        }
+
+        private static IEnumerable<FakeRequestResponse> CreateFakeRequestResponses(string expectedMethod, string expectedPath, string expectedUrlParameters, string expectedFormParameters, string expectedBody, FakeResponse fakeResponse = null, DateTime? created = null)
         {
             return new List<FakeRequestResponse>
                 {
@@ -102,7 +128,8 @@ namespace TinyFakeHostHelper.Tests.Unit
                                     FormParameters = new Parameters(ParseParameters(expectedFormParameters)),
                                     Body = expectedBody
                                 },
-                                FakeResponse = fakeResponse
+                            FakeResponse = fakeResponse,
+                            Created = created.HasValue ? created.Value : DateTime.MinValue
                         }
                 };
         }

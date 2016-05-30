@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using Nancy;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
@@ -20,7 +21,7 @@ namespace TinyFakeHostHelper.ServiceModules
 
             var requestFound = false;
 
-            foreach (var fakeRequestResponse in _fakeRequestResponseRepository.GetAll())
+            foreach (var fakeRequestResponse in _fakeRequestResponseRepository.GetAll().OrderByDescending(f => f.Created))
             {
                 var fakeRequest = fakeRequestResponse.FakeRequest;
 
