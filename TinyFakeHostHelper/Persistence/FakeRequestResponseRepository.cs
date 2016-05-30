@@ -9,7 +9,7 @@ namespace TinyFakeHostHelper.Persistence
 {
     public class FakeRequestResponseRepository : IFakeRequestResponseRepository
     {
-        private readonly IList<FakeRequestResponse> _fakeRequestResponses;
+        private IList<FakeRequestResponse> _fakeRequestResponses;
         private readonly IDateTimeProvider _dateTimeProvider;
 
         public FakeRequestResponseRepository(IDateTimeProvider dateTimeProvider)
@@ -44,6 +44,11 @@ namespace TinyFakeHostHelper.Persistence
 
             if (fakeRequestResponse != null)
                 _fakeRequestResponses.Remove(fakeRequestResponse);
+        }
+
+        public void DeleteAll()
+        {
+            _fakeRequestResponses = new List<FakeRequestResponse>();
         }
     }
 }

@@ -76,6 +76,21 @@ namespace TinyFakeHostHelper.Tests.Unit
             Assert.IsFalse(_fakeRequestResponseRepository.GetAll().Any(f => f.Id == id));
         }
 
+        [Test]
+        public void DeleteAll_method_deletes_all_stored_fakes()
+        {
+            var firstFakeRequestResponse = CreateFakeRequestResponseWith("A", HttpStatusCode.OK);
+            var secondFakeRequestResponse = CreateFakeRequestResponseWith("B", HttpStatusCode.BadRequest);
+
+            _fakeRequestResponseRepository.Add(firstFakeRequestResponse);
+            _fakeRequestResponseRepository.Add(secondFakeRequestResponse);
+            Assert.That(_fakeRequestResponseRepository.GetAll().Count(), Is.EqualTo(2));
+
+            _fakeRequestResponseRepository.DeleteAll();
+
+            Assert.That(_fakeRequestResponseRepository.GetAll().Count(), Is.EqualTo(0));
+        }
+
         private FakeRequestResponse AddFakeRequestResponse()
         {
             var fakeRequestResponse = new FakeRequestResponse();

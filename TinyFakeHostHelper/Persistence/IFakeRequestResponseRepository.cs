@@ -9,5 +9,6 @@ namespace TinyFakeHostHelper.Persistence
         void Add(FakeRequestResponse fakeRequestResponse);
         IEnumerable<FakeRequestResponse> GetAll();
         void DeleteById(Guid id);
+        void DeleteAll();
     }
 }
