@@ -78,6 +78,8 @@
     <Compile Include="ServiceModules\FakeServiceModule.cs" />
     <Compile Include="ServiceModules\IRequestValidator.cs" />
     <Compile Include="ServiceModules\RequestValidator.cs" />
+    <Compile Include="Supports\DateTimeProvider.cs" />
+    <Compile Include="Supports\IDateTimeProvider.cs" />
     <Compile Include="TinyFakeHost.cs" />
     <Compile Include="TinyFakeHostBootstrapper.cs" />
   </ItemGroup>
