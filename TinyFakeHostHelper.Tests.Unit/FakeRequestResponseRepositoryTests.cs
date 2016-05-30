@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using NUnit.Framework;
+using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 
@@ -10,18 +11,24 @@ namespace TinyFakeHostHelper.Tests.Unit
     [TestFixture]
     public class FakeRequestResponseRepositoryTests
     {
+        private FakeRequestResponseRepository _fakeRequestResponseRepository;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _fakeRequestResponseRepository = new FakeRequestResponseRepository();
+        }
+
         [Test]
         public void It_adds_FakeRequestResponse_and_reads_all_added_FakeRequestResponses()
         {
-            var fakeRequestResponseRepository = new FakeRequestResponseRepository();
-
             var firstFakeRequestResponse = CreateFakeRequestResponseWith("A", HttpStatusCode.OK);
             var secondFakeRequestResponse = CreateFakeRequestResponseWith("B", HttpStatusCode.BadRequest);
 
-            fakeRequestResponseRepository.Add(firstFakeRequestResponse);
-            fakeRequestResponseRepository.Add(secondFakeRequestResponse);
+            _fakeRequestResponseRepository.Add(firstFakeRequestResponse);
+            _fakeRequestResponseRepository.Add(secondFakeRequestResponse);
 
-            var fakeRequestResponses = fakeRequestResponseRepository.GetAll();
+            var fakeRequestResponses = _fakeRequestResponseRepository.GetAll();
 
             var expectedFakeRequestResponses = new List<FakeRequestResponse>
             {
@@ -29,6 +36,17 @@ namespace TinyFakeHostHelper.Tests.Unit
             };
 
             Assert.IsTrue(fakeRequestResponses.SequenceEqual(expectedFakeRequestResponses));
+        }
+
+        [Test]
+        public void When_FakeRequestResponse_with_existing_id_is_added_it_throws_unique_id_exception()
+        {
+            var fakeRequestResponse = new FakeRequestResponse();
+            _fakeRequestResponseRepository.Add(fakeRequestResponse);
+
+            Assert.Throws<UniqueIdException>(() =>
+                _fakeRequestResponseRepository.Add(fakeRequestResponse)
+            );
         }
 
         private static FakeRequestResponse CreateFakeRequestResponseWith(string key, HttpStatusCode statusCode)
