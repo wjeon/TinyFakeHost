@@ -7,16 +7,16 @@ namespace TinyFakeHostHelper.Persistence
 {
     public class FakeRequestResponseRepository : IFakeRequestResponseRepository
     {
-        private readonly IList<FakeRequestResponse> _fakeRequestRequestResponses;
+        private readonly IList<FakeRequestResponse> _fakeRequestResponses;
 
         public FakeRequestResponseRepository()
         {
-            _fakeRequestRequestResponses = new List<FakeRequestResponse>();
+            _fakeRequestResponses = new List<FakeRequestResponse>();
         }
 
         public void Add(FakeRequestResponse fakeRequestResponse)
         {
-            if (_fakeRequestRequestResponses.Any(f => f.Id == fakeRequestResponse.Id))
+            if (_fakeRequestResponses.Any(f => f.Id == fakeRequestResponse.Id))
                 throw new UniqueIdException(
                     string.Format(
                         "Id of FakeRequestResponse '{0}' already exists in stored fakes",
@@ -24,12 +24,12 @@ namespace TinyFakeHostHelper.Persistence
                     )
                 );
 
-            _fakeRequestRequestResponses.Add(fakeRequestResponse);
+            _fakeRequestResponses.Add(fakeRequestResponse);
         }
 
         public IEnumerable<FakeRequestResponse> GetAll()
         {
-            return _fakeRequestRequestResponses;
+            return _fakeRequestResponses;
         }
     }
 }
