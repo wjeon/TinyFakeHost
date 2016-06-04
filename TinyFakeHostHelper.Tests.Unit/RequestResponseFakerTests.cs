@@ -10,18 +10,25 @@ namespace TinyFakeHostHelper.Tests.Unit
     [TestFixture]
     public class RequestResponseFakerTests
     {
+        private IFakeRequestResponseRepository _repository;
+        private RequestResponseFaker _faker;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _repository = new FakeRequestResponseRepository();
+            _faker = new RequestResponseFaker(_repository, new TinyFakeHostConfiguration());
+        }
+
         [Test]
         public void LastCreatedFakeId_property_returns_id_of_last_created_fake()
         {
-            var repository = new FakeRequestResponseRepository();
-            var faker = new RequestResponseFaker(repository, new TinyFakeHostConfiguration());
+            _faker.Fake(f => f.IfRequest("/pathForFirstFake").ThenReturn(new FakeResponse()));
+            _faker.Fake(f => f.IfRequest("/pathForSecondFake").ThenReturn(new FakeResponse()));
 
-            faker.Fake(f => f.IfRequest("/pathForFirstFake").ThenReturn(new FakeResponse()));
-            faker.Fake(f => f.IfRequest("/pathForSecondFake").ThenReturn(new FakeResponse()));
+            var lastCreatedFakeId = _repository.GetAll().ToList().Find(a => a.FakeRequest.Path == "/pathForSecondFake").Id;
 
-            var lastCreatedFakeId = repository.GetAll().ToList().Find(a => a.FakeRequest.Path == "/pathForSecondFake").Id;
-
-            Assert.AreEqual(faker.LastCreatedFakeId, lastCreatedFakeId);
+            Assert.AreEqual(_faker.LastCreatedFakeId, lastCreatedFakeId);
         }
     }
 }
