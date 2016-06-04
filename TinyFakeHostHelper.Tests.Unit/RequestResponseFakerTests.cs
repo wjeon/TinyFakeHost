@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
+using Rhino.Mocks;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Fakers;
 using TinyFakeHostHelper.Persistence;
@@ -30,6 +32,30 @@ namespace TinyFakeHostHelper.Tests.Unit
             var lastCreatedFakeId = _repository.GetAll().ToList().Find(a => a.FakeRequest.Path == "/pathForSecondFake").Id;
 
             Assert.AreEqual(_faker.LastCreatedFakeId, lastCreatedFakeId);
+        }
+
+        [Test]
+        public void DeleteFakeById_method_calls_DeleteById_method_in_FakeRequestResponseRepository()
+        {
+            var id = Guid.NewGuid();
+            var repository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
+            _faker = new RequestResponseFaker(repository, new TinyFakeHostConfiguration());
+
+            _faker.DeleteFakeById(id);
+
+            repository.AssertWasCalled(r => r.DeleteById(id));
+        }
+
+        [Test]
+        public void When_delete_fake_by_last_created_fake_id_it_also_sets_the_stored_last_created_fake_id_to_null()
+        {
+            _faker.Fake(f => f.IfRequest("/pathForLastFake").ThenReturn(new FakeResponse()));
+            Assert.IsNotNull(_faker.LastCreatedFakeId);
+            var lastCreatedFakeId = _faker.LastCreatedFakeId;
+
+            _faker.DeleteFakeById(lastCreatedFakeId.Value);
+
+            Assert.IsNull(_faker.LastCreatedFakeId);
         }
     }
 }
