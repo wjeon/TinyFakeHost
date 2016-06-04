@@ -91,41 +91,6 @@ namespace TinyFakeHostHelper.Tests.Unit
         }
 
         [Test]
-        public void LastCreatedFakeId_property_returns_id_of_last_created_fake()
-        {
-            _fluentFaker.IfRequest("/pathForFirstFake").ThenReturn(new FakeResponse());
-            _fluentFaker.IfRequest("/pathForSecondFake").ThenReturn(new FakeResponse());
-
-            var lastCreatedFakeId = _repository.GetAll().ToList().Find(a => a.FakeRequest.Path == "/pathForSecondFake").Id;
-
-            Assert.AreEqual(_fluentFaker.LastCreatedFakeId, lastCreatedFakeId);
-        }
-
-        [Test]
-        public void DeleteFakeById_method_calls_DeleteById_method_in_FakeRequestResponseRepository()
-        {
-            var id = Guid.NewGuid();
-            var repository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
-            _fluentFaker = new FluentFaker(repository, _configuration);
-
-            _fluentFaker.DeleteFakeById(id);
-
-            repository.AssertWasCalled(r => r.DeleteById(id));
-        }
-
-        [Test]
-        public void When_delete_fake_by_last_created_fake_id_it_also_sets_the_stored_last_created_fake_id_to_null()
-        {
-            _fluentFaker.IfRequest("/pathForLastFake").ThenReturn(new FakeResponse());
-            Assert.IsNotNull(_fluentFaker.LastCreatedFakeId);
-            var lastCreatedFakeId = _fluentFaker.LastCreatedFakeId;
-
-            _fluentFaker.DeleteFakeById(lastCreatedFakeId.Value);
-
-            Assert.IsNull(_fluentFaker.LastCreatedFakeId);
-        }
-
-        [Test]
         public void DeleteLastCreatedFake_method_deletes_fake_by_stored_last_created_fake_id()
         {
             _fluentFaker.IfRequest("/pathForLastFake").ThenReturn(new FakeResponse());
