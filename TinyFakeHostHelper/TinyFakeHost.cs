@@ -83,7 +83,7 @@ namespace TinyFakeHostHelper
 
         public RequestResponseFaker GetFaker()
         {
-            return new RequestResponseFaker(_container);
+            return new RequestResponseFaker(_container.Resolve<IFakeRequestResponseRepository>(), _container.Resolve<ITinyFakeHostConfiguration>());
         }
 
         public RequestedQueryAsserter GetAsserter()

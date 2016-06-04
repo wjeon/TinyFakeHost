@@ -1,5 +1,4 @@
 ﻿using System;
-using Nancy.TinyIoc;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Persistence;
 
@@ -7,13 +6,13 @@ namespace TinyFakeHostHelper.Fakers
 {
     public class RequestResponseFaker
     {
+        private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
         private readonly FluentFaker _fluentFaker;
 
-        public RequestResponseFaker(TinyIoCContainer container)
+        public RequestResponseFaker(IFakeRequestResponseRepository fakeRequestResponseRepository, ITinyFakeHostConfiguration configuration)
         {
-            var fakeRequestResponseRepository = container.Resolve<IFakeRequestResponseRepository>();
-            var configuration = container.Resolve<ITinyFakeHostConfiguration>();
-            _fluentFaker = new FluentFaker(fakeRequestResponseRepository, configuration);
+            _fakeRequestResponseRepository = fakeRequestResponseRepository;
+            _fluentFaker = new FluentFaker(_fakeRequestResponseRepository, configuration);
         }
 
         /// <summary>
@@ -25,6 +24,11 @@ namespace TinyFakeHostHelper.Fakers
         public void Fake(Func<FluentFaker, FluentFaker> fluentFake)
         {
             fluentFake(_fluentFaker);
+        }
+
+        public Guid? LastCreatedFakeId
+        {
+            get { return _fluentFaker.LastCreatedFakeId; }
         }
     }
 }
