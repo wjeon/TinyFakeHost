@@ -14,7 +14,7 @@ namespace TinyFakeHostHelper.Fakers
         private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
         private readonly ITinyFakeHostConfiguration _configuration;
         private FakeRequestResponse _fakeRequestResponse;
-        private Guid? _lastCreatedFakeId;
+        internal Guid? LastCreatedFakeId;
 
         private const string MaxNumberOfSegmentsExceptionMessage =
             "The number of segments of the requested url path is bigger than MaximumNumberOfUrlPathSegments setting " +
@@ -108,42 +108,37 @@ namespace TinyFakeHostHelper.Fakers
 
             _fakeRequestResponseRepository.Add(_fakeRequestResponse);
 
-            _lastCreatedFakeId = _fakeRequestResponse.Id;
+            LastCreatedFakeId = _fakeRequestResponse.Id;
 
             ClearRequestResponse();
 
             return this;
         }
 
-        public Guid? LastCreatedFakeId
-        {
-            get { return _lastCreatedFakeId; }
-        }
-
         public void DeleteFakeById(Guid id)
         {
-            if (_lastCreatedFakeId == id)
-                _lastCreatedFakeId = null;
+            if (LastCreatedFakeId == id)
+                LastCreatedFakeId = null;
 
             _fakeRequestResponseRepository.DeleteById(id);
         }
 
         public void DeleteLastCreatedFake()
         {
-            if (!_lastCreatedFakeId.HasValue)
+            if (!LastCreatedFakeId.HasValue)
             {
                 Console.WriteLine("Cannot not find last created fake");
                 return;
             }
 
-            _fakeRequestResponseRepository.DeleteById(_lastCreatedFakeId.Value);
-            _lastCreatedFakeId = null;
+            _fakeRequestResponseRepository.DeleteById(LastCreatedFakeId.Value);
+            LastCreatedFakeId = null;
         }
 
         public void DeleteAllFakes()
         {
             _fakeRequestResponseRepository.DeleteAll();
-            _lastCreatedFakeId = null;
+            LastCreatedFakeId = null;
         }
 
         private void ClearRequestResponse()
