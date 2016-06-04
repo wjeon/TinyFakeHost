@@ -90,30 +90,6 @@ namespace TinyFakeHostHelper.Tests.Unit
             AppSettingHelper.RemoveAppSettingInMemory("MaximumNumberOfPathSegments");
         }
 
-        [Test]
-        public void DeleteFakeById_method_calls_DeleteById_method_in_FakeRequestResponseRepository()
-        {
-            var id = Guid.NewGuid();
-            var repository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
-            _fluentFaker = new FluentFaker(repository, _configuration);
-
-            _fluentFaker.DeleteFakeById(id);
-
-            repository.AssertWasCalled(r => r.DeleteById(id));
-        }
-
-        [Test]
-        public void When_delete_fake_by_last_created_fake_id_it_also_sets_the_stored_last_created_fake_id_to_null()
-        {
-            _fluentFaker.IfRequest("/pathForLastFake").ThenReturn(new FakeResponse());
-            Assert.IsNotNull(_fluentFaker.LastCreatedFakeId);
-            var lastCreatedFakeId = _fluentFaker.LastCreatedFakeId;
-
-            _fluentFaker.DeleteFakeById(lastCreatedFakeId.Value);
-
-            Assert.IsNull(_fluentFaker.LastCreatedFakeId);
-        }
-
         private void AssertThatFakeRequestAndResponseAreStored
             (string path, string urlParameters, string formParameters, string content, string contentType, HttpStatusCode statusCode, string reasonPhrase)
         {
