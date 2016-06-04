@@ -7,11 +7,13 @@ namespace TinyFakeHostHelper.Fakers
 {
     public class RequestResponseFaker
     {
-        private readonly TinyIoCContainer _container;
+        private readonly FluentFaker _fluentFaker;
 
         public RequestResponseFaker(TinyIoCContainer container)
         {
-            _container = container;
+            var fakeRequestResponseRepository = container.Resolve<IFakeRequestResponseRepository>();
+            var configuration = container.Resolve<ITinyFakeHostConfiguration>();
+            _fluentFaker = new FluentFaker(fakeRequestResponseRepository, configuration);
         }
 
         /// <summary>
@@ -22,10 +24,7 @@ namespace TinyFakeHostHelper.Fakers
         /// </param>
         public void Fake(Func<FluentFaker, FluentFaker> fluentFake)
         {
-            var fakeRequestResponseRepository = _container.Resolve<IFakeRequestResponseRepository>();
-            var configuration = _container.Resolve<ITinyFakeHostConfiguration>();
-
-            fluentFake(new FluentFaker(fakeRequestResponseRepository, configuration));
+            fluentFake(_fluentFaker);
         }
     }
 }
