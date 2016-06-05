@@ -90,17 +90,6 @@ namespace TinyFakeHostHelper.Tests.Unit
         }
 
         [Test]
-        public void LastCreatedFakeId_property_returns_id_of_last_created_fake()
-        {
-            _fluentFaker.IfRequest("/pathForFirstFake").ThenReturn(new FakeResponse());
-            _fluentFaker.IfRequest("/pathForSecondFake").ThenReturn(new FakeResponse());
-
-            var lastCreatedFakeId = _repository.GetAll().ToList().Find(a => a.FakeRequest.Path == "/pathForSecondFake").Id;
-
-            Assert.AreEqual(_fluentFaker.LastCreatedFakeId, lastCreatedFakeId);
-        }
-
-        [Test]
         public void DeleteAllFakes_method_calls_DeleteAll_method_in_FakeRequestResponseRepository()
         {
             var repository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
