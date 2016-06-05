@@ -8,7 +8,7 @@ using TinyFakeHostHelper.Tests.Integration.Extensions;
 namespace TinyFakeHostHelper.Tests.Integration
 {
     [TestFixture]
-    public class TinyFakeHostTests : TinyFakeHostTestBase
+    public class TinyFakeHostTests : TestBase
     {
         private IRestRequest _request;
 
