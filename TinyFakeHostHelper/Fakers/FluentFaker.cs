@@ -108,12 +108,6 @@ namespace TinyFakeHostHelper.Fakers
             return this;
         }
 
-        public void DeleteAllFakes()
-        {
-            _fakeRequestResponseRepository.DeleteAll();
-            LastCreatedFakeId = null;
-        }
-
         private void ClearRequestResponse()
         {
             _fakeRequestResponse = null;

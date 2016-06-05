@@ -30,5 +30,11 @@ namespace TinyFakeHostHelper.Fakers
         {
             get { return _fluentFaker.LastCreatedFakeId; }
         }
+
+        public void DeleteAllFakes()
+        {
+            _fakeRequestResponseRepository.DeleteAll();
+            _fluentFaker.LastCreatedFakeId = null;
+        }
     }
 }
