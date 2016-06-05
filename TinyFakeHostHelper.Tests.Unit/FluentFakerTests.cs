@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using NUnit.Framework;
 using Rhino.Mocks;
@@ -93,27 +92,6 @@ namespace TinyFakeHostHelper.Tests.Unit
             Assert.Throws<MaximumNumberOfUrlPathSegmentsException>(() => _fluentFaker.IfRequest("/vendors/9876-5432-1098-7654/products"));
 
             AppSettingHelper.RemoveAppSettingInMemory("MaximumNumberOfPathSegments");
-        }
-
-        public void DeleteAllFakes_method_calls_DeleteAll_method_in_FakeRequestResponseRepository()
-        {
-            var repository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
-            _fluentFaker = new FluentFaker(repository, _configuration);
-
-            _fluentFaker.DeleteAllFakes();
-
-            repository.AssertWasCalled(r => r.DeleteAll());
-        }
- 
-        [Test]
-        public void When_delete_all_fakes_it_also_sets_the_stored_last_created_fake_id_to_null()
-        {
-            _fluentFaker.IfRequest("/pathForLastFake").ThenReturn(new FakeResponse());
-            Assert.IsNotNull(_fluentFaker.LastCreatedFakeId);
-
-            _fluentFaker.DeleteAllFakes();
-
-            Assert.IsNull(_fluentFaker.LastCreatedFakeId);
         }
 
         private void AssertThatFakeRequestAndResponseAreStored

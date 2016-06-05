@@ -50,5 +50,11 @@ namespace TinyFakeHostHelper.Fakers
             _fakeRequestResponseRepository.DeleteById(_fluentFaker.LastCreatedFakeId.Value);
             _fluentFaker.LastCreatedFakeId = null;
         }
+
+        public void DeleteAllFakes()
+        {
+            _fakeRequestResponseRepository.DeleteAll();
+            _fluentFaker.LastCreatedFakeId = null;
+        }
     }
 }
