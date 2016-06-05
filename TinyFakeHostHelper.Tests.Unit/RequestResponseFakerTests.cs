@@ -57,5 +57,21 @@ namespace TinyFakeHostHelper.Tests.Unit
 
             Assert.IsNull(_faker.LastCreatedFakeId);
         }
+
+        [Test]
+        public void DeleteLastCreatedFake_method_deletes_fake_by_stored_last_created_fake_id()
+        {
+            _faker.Fake(f => f.IfRequest("/pathForLastFake").ThenReturn(new FakeResponse()));
+            Assert.IsNotNull(StoredLastFake());
+
+            _faker.DeleteLastCreatedFake();
+
+            Assert.IsNull(StoredLastFake());
+        }
+
+        private FakeRequestResponse StoredLastFake()
+        {
+            return _repository.GetAll().ToList().Find(a => a.FakeRequest.Path == "/pathForLastFake");
+        }
     }
 }

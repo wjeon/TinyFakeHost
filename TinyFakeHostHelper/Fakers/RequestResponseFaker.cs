@@ -38,5 +38,17 @@ namespace TinyFakeHostHelper.Fakers
 
             _fakeRequestResponseRepository.DeleteById(id);
         }
+
+        public void DeleteLastCreatedFake()
+        {
+            if (!_fluentFaker.LastCreatedFakeId.HasValue)
+            {
+                Console.WriteLine("Cannot not find last created fake");
+                return;
+            }
+
+            _fakeRequestResponseRepository.DeleteById(_fluentFaker.LastCreatedFakeId.Value);
+            _fluentFaker.LastCreatedFakeId = null;
+        }
     }
 }
