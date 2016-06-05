@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using NUnit.Framework;
 using RestSharp;
-using TinyFakeHostHelper.Fakers;
 using TinyFakeHostHelper.RequestResponse;
 using Method = RestSharp.Method;
 
@@ -12,20 +11,8 @@ namespace TinyFakeHostHelper.Tests.Integration
     [TestFixture]
     class Given_TinyFakeHost_is_hosting_a_fake_web_service : TinyFakeHostTestBase
     {
-        private TinyFakeHost _tinyFakeHost;
-        private RequestResponseFaker _faker;
         private const string ResourcePath = "/resourcePath";
         private const string UrlParameter = "param=value";
-
-        [SetUp]
-        public void Given()
-        {
-            _tinyFakeHost = new TinyFakeHost(BaseUri);
-
-            _tinyFakeHost.Start();
-
-            _faker = _tinyFakeHost.GetFaker();
-        }
 
         [TestCase("GET", "", "")]
         [TestCase("DELETE", "", "")]
@@ -39,7 +26,7 @@ namespace TinyFakeHostHelper.Tests.Integration
             const string resourcePath = "/vendors/9876-5432-1098-7654/products";
             const string urlParameters = "type=desk";
 
-            _faker.Fake(f => f
+            Faker.Fake(f => f
                 .IfRequest(resourcePath)
                 .WithMethod(TinyFakeHostMethod(requestMethod))
                 .WithUrlParameters(urlParameters)
@@ -53,7 +40,7 @@ namespace TinyFakeHostHelper.Tests.Integration
             AddUrlParametersToRequest(request, urlParameters);
             AddFormParametersToRequest(request, formParameters);
 
-            _tinyFakeHost.RequestedQueryPrint = true;
+            TinyFakeHost.RequestedQueryPrint = true;
 
             var response = RestClient.Execute(request);
 
@@ -74,13 +61,13 @@ namespace TinyFakeHostHelper.Tests.Integration
         [TestCase("/invalidPath", "param=invalidParameter", @"{""message"":""Bad Request""}", "application/json", "BadRequest")]
         public void When_a_web_client_queries_the_fake_web_service_with_parameters_it_returns_a_fake_content(string resourcePath, string urlParameters, string responseContent, string contentType, string statusCode)
         {
-            _faker.Fake(f => f
+            Faker.Fake(f => f
                 .IfRequest(resourcePath)
                 .WithUrlParameters(urlParameters)
                 .ThenReturn(new FakeResponse { ContentType = contentType, Content = responseContent, StatusCode = ParseHttpStatusCode(statusCode) })
             );
 
-            _tinyFakeHost.RequestedQueryPrint = true;
+            TinyFakeHost.RequestedQueryPrint = true;
 
             var response = CallFakeService(resourcePath, urlParameters);
 
@@ -92,12 +79,12 @@ namespace TinyFakeHostHelper.Tests.Integration
         [TestCase("/vendors/9876-5432-1098-7654/products", @"[{""id"":460173,""name"":""Product A"",""type"":""chair"",""manufactureYear"":2014},{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]", "application/json", "OK")]
         public void When_a_web_client_queries_the_fake_web_service_without_parameters_it_returns_a_fake_content(string resourcePath, string responseContent, string contentType, string statusCode)
         {
-            _faker.Fake(f => f
+            Faker.Fake(f => f
                 .IfRequest(resourcePath)
                 .ThenReturn(new FakeResponse { ContentType = contentType, Content = responseContent, StatusCode = ParseHttpStatusCode(statusCode) })
             );
 
-            _tinyFakeHost.RequestedQueryPrint = true;
+            TinyFakeHost.RequestedQueryPrint = true;
 
             var response = CallFakeService(resourcePath);
 
@@ -109,7 +96,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             const string resourcePath = "/timeout";
 
-            _faker.Fake(f => f
+            Faker.Fake(f => f
                 .IfRequest(resourcePath)
                 .ThenReturn(new FakeResponse{
                     ContentType = "application/json",
@@ -129,7 +116,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             CallFakeService(ResourcePath, UrlParameter);
 
-            var requestedQueries = _tinyFakeHost.GetRequestedQueries();
+            var requestedQueries = TinyFakeHost.GetRequestedQueries();
 
             Assert.IsTrue(requestedQueries.Any(a => a.Path == ResourcePath && a.UrlParameters.ToString() == UrlParameter));
         }
@@ -139,7 +126,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             CallFakeService(ResourcePath, UrlParameter);
 
-            var asserter = _tinyFakeHost.GetAsserter();
+            var asserter = TinyFakeHost.GetAsserter();
 
             Assert.DoesNotThrow(() =>
                 asserter.Assert(a => a
@@ -155,7 +142,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             CallFakeService(ResourcePath);
 
-            var asserter = _tinyFakeHost.GetAsserter();
+            var asserter = TinyFakeHost.GetAsserter();
 
             Assert.DoesNotThrow(() =>
                 asserter.Assert(a => a
@@ -170,7 +157,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             CallFakeService(Method.PUT, ResourcePath, null, "param=value");
 
-            var asserter = _tinyFakeHost.GetAsserter();
+            var asserter = TinyFakeHost.GetAsserter();
 
             Assert.DoesNotThrow(() =>
                 asserter.Assert(a => a
@@ -187,7 +174,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             CallFakeService(ResourcePath);
 
-            var asserter = _tinyFakeHost.GetAsserter();
+            var asserter = TinyFakeHost.GetAsserter();
 
             Assert.Throws<Exceptions.AssertionException>(() =>
                 asserter.Assert(a => a
@@ -202,7 +189,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         {
             CallFakeService(ResourcePath, UrlParameter);
 
-            var asserter = _tinyFakeHost.GetAsserter();
+            var asserter = TinyFakeHost.GetAsserter();
 
             Assert.Throws<Exceptions.AssertionException>(() =>
                 asserter.Assert(a => a
@@ -212,15 +199,6 @@ namespace TinyFakeHostHelper.Tests.Integration
                 )
             );
         }
-
-        [TearDown]
-        public void TearDown()
-        {
-            _tinyFakeHost.Stop();
-
-            _tinyFakeHost.Dispose();
-        }
-
         private IRestResponse CallFakeService(string resourcePath, int timeout)
         {
             return CallFakeService(Method.GET, resourcePath, null, null, timeout);

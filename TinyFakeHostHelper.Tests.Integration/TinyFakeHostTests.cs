@@ -8,7 +8,7 @@ using TinyFakeHostHelper.Tests.Integration.Extensions;
 namespace TinyFakeHostHelper.Tests.Integration
 {
     [TestFixture]
-    public class TinyFakeHostTests : TinyFakeHostTestBase
+    public class TinyFakeHostTests : TestBase
     {
         private IRestRequest _request;
 
@@ -38,7 +38,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         }
 
         [Test]
-        public void When_2_TinyFakeHosts_run_concurrently_with_the_smae_port_number_one_waits_until_the_other_one_stops()
+        public void When_2_TinyFakeHosts_run_concurrently_with_the_same_port_number_one_waits_until_the_other_stops()
         {
             var runFakeHostThread = new Thread(() => RunFakeHostFor(5.Seconds()));
 

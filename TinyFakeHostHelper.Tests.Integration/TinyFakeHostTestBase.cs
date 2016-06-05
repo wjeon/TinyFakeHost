@@ -1,23 +1,29 @@
 ﻿using NUnit.Framework;
-using RestSharp;
+using TinyFakeHostHelper.Fakers;
 
 namespace TinyFakeHostHelper.Tests.Integration
 {
-    [TestFixture]
-    public abstract class TinyFakeHostTestBase
+    public abstract class TinyFakeHostTestBase : TestBase
     {
-        protected const string BaseUri = "http://localhost:5432/";
-        protected IRestClient RestClient;
+        protected TinyFakeHost TinyFakeHost;
+        protected RequestResponseFaker Faker;
 
-        [SetUp]
-        public void SetUp()
+        [TestFixtureSetUp]
+        public void FixtureSetUp()
         {
-            RestClient = new RestClient(BaseUri);
+            TinyFakeHost = new TinyFakeHost(BaseUri);
+
+            TinyFakeHost.Start();
+
+            Faker = TinyFakeHost.GetFaker();
         }
 
-        protected IRestRequest CreateRequest(string resourcePath, Method method)
+        [TestFixtureTearDown]
+        public void FixtureTearDown()
         {
-            return new RestRequest(resourcePath, method);
+            TinyFakeHost.Stop();
+
+            TinyFakeHost.Dispose();
         }
     }
 }
