@@ -59,6 +59,7 @@
     <Compile Include="Exceptions\MaximumNumberOfUrlPathSegmentsException.cs" />
     <Compile Include="Extensions\DynamicDictionaryExtensions.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />
+    <Compile Include="Extensions\HttpMethodExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Fakers\FluentFaker.cs" />
     <Compile Include="Fakers\RequestResponseFaker.cs" />
