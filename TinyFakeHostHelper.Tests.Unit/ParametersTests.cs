@@ -33,6 +33,21 @@ namespace TinyFakeHostHelper.Tests.Unit
 
             Assert.IsFalse(_parameters.Equals(requestedParameters));
         }
+
+        [Test]
+        public void When_Parameters_and_key_value_string_parameters_are_equal_Equals_method_returns_true()
+        {
+            const string keyValueStringParameters = "KeyB=ValueB&KeyA=ValueA";
+
+            Assert.IsTrue(_parameters.Equals(keyValueStringParameters));
+        }
+
+        [Test]
+        public void When_Parameters_and_key_value_string_parameters_are_not_equal_Equals_method_returns_false()
+        {
+            const string keyValueStringParameters = "KeyB=ValueA&&KeyA";
+
+            Assert.IsFalse(_parameters.Equals(keyValueStringParameters));
         }
     }
 }
