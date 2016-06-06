@@ -35,6 +35,14 @@ namespace TinyFakeHostHelper.Tests.Unit
         }
 
         [Test]
+        public void When_Parameters_has_value_and_dynamic_dictionary_for_requested_parameters_is_null_Equals_method_returns_false()
+        {
+            DynamicDictionary requestedParameters = null;
+
+            Assert.IsFalse(_parameters.Equals(requestedParameters));
+        }
+
+        [Test]
         public void When_Parameters_and_key_value_string_parameters_are_equal_Equals_method_returns_true()
         {
             const string keyValueStringParameters = "KeyB=ValueB&KeyA=ValueA";
@@ -46,6 +54,14 @@ namespace TinyFakeHostHelper.Tests.Unit
         public void When_Parameters_and_key_value_string_parameters_are_not_equal_Equals_method_returns_false()
         {
             const string keyValueStringParameters = "KeyB=ValueA&&KeyA";
+
+            Assert.IsFalse(_parameters.Equals(keyValueStringParameters));
+        }
+
+        [Test]
+        public void When_Parameters_has_value_and_key_value_string_parameters_is_null_Equals_method_returns_false()
+        {
+            const string keyValueStringParameters = null;
 
             Assert.IsFalse(_parameters.Equals(keyValueStringParameters));
         }

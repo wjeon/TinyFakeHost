@@ -11,16 +11,28 @@ namespace TinyFakeHostHelper.RequestResponse
 
         public bool Equals(DynamicDictionary query)
         {
-            if (query.Count == 0 && Count == 0) return true;
+            if ((query == null || query.Count == 0) && Count == 0) return true;
+
+            if (query == null || query.Count == 0 || Count == 0) return false;
 
             var parameters = query.Keys.Select(key => new Parameter(key, query[key].ToString())).ToList();
 
-            return this.OrderBy(r => r.Key).SequenceEqual(parameters.OrderBy(r => r.Key));
+            return SequenceEqual(parameters);
         }
 
         public bool Equals(string value)
         {
+            if (string.IsNullOrEmpty(value) && Count == 0) return true;
+
+            if (string.IsNullOrEmpty(value) || Count == 0) return false;
+
             var parameters = value.Split('&').Select(v => v.Split('=')).Select(p => new Parameter(p[0], p.Length > 1 ? p[1] : null)).ToList();
+
+            return SequenceEqual(parameters);
+        }
+
+        private bool SequenceEqual(IEnumerable<Parameter> parameters)
+        {
             return this.OrderBy(r => r.Key).SequenceEqual(parameters.OrderBy(r => r.Key));
         }
 
