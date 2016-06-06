@@ -24,5 +24,10 @@ namespace TinyFakeHostHelper.Extensions
 
             return parameters;
         }
+
+        public static bool IsEqualTo(this string left, string right)
+        {
+            return (left ?? string.Empty) == (right ?? string.Empty);
+        }
     }
 }

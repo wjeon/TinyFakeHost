@@ -14,13 +14,13 @@ namespace TinyFakeHostHelper.Tests.Integration
         private const string ResourcePath = "/resourcePath";
         private const string UrlParameter = "param=value";
 
-        [TestCase("GET", "", "")]
-        [TestCase("DELETE", "", "")]
-        [TestCase("OPTIONS", "", "")]
-        [TestCase("PATCH", "manufactureYear=2013", "manufactureYear=2013")]
-        [TestCase("POST", "manufactureYear=2013", "manufactureYear=2013")]
-        [TestCase("PUT", "manufactureYear=2013", "manufactureYear=2013")]
-        public void When_a_web_client_queries_the_fake_web_service_with_different_methods_it_returns_a_fake_content_correctly(string requestMethod, string formParameters, string body)
+        [TestCase("GET", "")]
+        [TestCase("DELETE", "")]
+        [TestCase("OPTIONS", "")]
+        [TestCase("PATCH", "manufactureYear=2013")]
+        [TestCase("POST", "manufactureYear=2013")]
+        [TestCase("PUT", "manufactureYear=2013")]
+        public void When_a_web_client_queries_the_fake_web_service_with_different_methods_it_returns_a_fake_content_correctly(string requestMethod, string formParameters)
         {
             const string responseContent = @"[{""id"":389317,""name"":""Product B"",""type"":""desk"",""manufactureYear"":2013}]";
             const string resourcePath = "/vendors/9876-5432-1098-7654/products";
@@ -31,7 +31,6 @@ namespace TinyFakeHostHelper.Tests.Integration
                 .WithMethod(TinyFakeHostMethod(requestMethod))
                 .WithUrlParameters(urlParameters)
                 .WithFormParameters(formParameters)
-                .WithBody(body)
                 .ThenReturn(new FakeResponse { ContentType = "application/json", Content = responseContent, StatusCode = ParseHttpStatusCode("OK") })
             );
 

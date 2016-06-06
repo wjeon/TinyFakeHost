@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using Nancy;
+using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 
@@ -27,8 +28,8 @@ namespace TinyFakeHostHelper.ServiceModules
 
                 if (fakeRequest.Method.Equals(method) && fakeRequest.Path.Equals(url.Path) &&
                     fakeRequest.UrlParameters.Equals(query) && fakeRequest.FormParameters.Equals(form) &&
-                    (fakeRequest.Body ?? string.Empty) == (body ?? string.Empty))
-                {
+                    (fakeRequest.Body.IsEqualTo(body) || (method.IsBodyAllowedMethod() && fakeRequest.FormParameters.Equals(body)))
+                ) {
                     var fakeResponse = fakeRequestResponse.FakeResponse;
 
                     if (fakeResponse.MillisecondsSleep > 0)
