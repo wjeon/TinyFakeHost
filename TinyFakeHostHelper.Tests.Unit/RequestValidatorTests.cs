@@ -16,7 +16,6 @@ namespace TinyFakeHostHelper.Tests.Unit
     {
         private RequestValidator _requestValidator;
         private IFakeRequestResponseRepository _fakeRequestResponseRepository;
-        private const Method RequestedMethod = Method.POST;
         private const string RequestedPath = "/resourcePath";
         private const string RequestedUrlParams = "urlParam1=value1&urlParam2=value2";
         private const string RequestedFormParams = "formParam1=value1&formParam2=value2";
@@ -29,8 +28,10 @@ namespace TinyFakeHostHelper.Tests.Unit
             _requestValidator = new RequestValidator(_fakeRequestResponseRepository);
         }
 
-        [Test]
-        public void When_fake_request_has_correct_value_then_GetValidatedFakeResponse_method_returns_fake_response()
+        [TestCase(Method.GET, "urlParam1=value1&urlParam2=value2", "", "", "")]
+        [TestCase(Method.POST, "", "formParam1=value1&formParam2=value2", "", "formParam1=value1&formParam2=value2")]
+        [TestCase(Method.POST, "", "", "{\"RequestedBody\":\"Test Body\"}", "{\"RequestedBody\":\"Test Body\"}")]
+        public void When_fake_request_has_correct_value_then_GetValidatedFakeResponse_method_returns_fake_response(Method method, string urlParams, string formParams, string requestedBody, string receivedBody)
         {
             var fakeResponse = new FakeResponse
                 {
@@ -39,16 +40,16 @@ namespace TinyFakeHostHelper.Tests.Unit
                     StatusCode = System.Net.HttpStatusCode.OK
                 };
             var fakeRequestResponses = CreateFakeRequestResponses(
-                RequestedMethod.ToString(), RequestedPath, RequestedUrlParams, RequestedFormParams, RequestedBody,
+                method.ToString(), RequestedPath, urlParams, formParams, requestedBody,
                 fakeResponse
             );
             _fakeRequestResponseRepository.Stub(s => s.GetAll()).Return(fakeRequestResponses);
 
             var response = _requestValidator.GetValidatedFakeResponse(
-                RequestedMethod, new Url { Path = RequestedPath },
-                DynamicDictionaryParseParameters(RequestedUrlParams),
-                DynamicDictionaryParseParameters(RequestedFormParams),
-                RequestedBody
+                method, new Url { Path = RequestedPath },
+                DynamicDictionaryParseParameters(urlParams),
+                DynamicDictionaryParseParameters(formParams),
+                receivedBody
             );
 
             Assert.That(response.StatusCode, Is.EqualTo(fakeResponse.ToNancyResponse().StatusCode));
@@ -56,30 +57,30 @@ namespace TinyFakeHostHelper.Tests.Unit
             Assert.That(response.ContentType, Is.EqualTo(fakeResponse.ContentType));
         }
 
-        [TestCase("POST", "/resourcePath", "urlParam1=value1&urlParam2=value2", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("POST", "/resourcePath", "urlParam=incorrectValue", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("POST", "/wrongResourcePath", "urlParam1=value1&urlParam2=value2", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("GET", "/resourcePath", "urlParam1=value1&urlParam2=value2", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("POST", "/resourcePath", "urlParam=incorrectValue", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("POST", "/wrongResourcePath", "urlParam1=value1&urlParam2=value2", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("POST", "/wrongResourcePath", "urlParam=incorrectValue", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("GET", "/wrongResourcePath", "urlParam1=value1&urlParam2=value2", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("GET", "/resourcePath", "urlParam=incorrectValue", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("GET", "/resourcePath", "urlParam1=value1&urlParam2=value2", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("POST", "/wrongResourcePath", "urlParam=incorrectValue", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("GET", "/resourcePath", "urlParam=incorrectValue", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("GET", "/wrongResourcePath", "urlParam1=value1&urlParam2=value2", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("GET", "/wrongResourcePath", "urlParam=incorrectValue", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("GET", "/wrongResourcePath", "urlParam=incorrectValue", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase("POST", "/resourcePath", "urlParam1=value1&urlParam2=value2", "formParam1=value1&formParam2=value2", "")]
-        public void When_fake_request_has_one_or_more_incorrect_value_then_GetValidatedFakeResponse_method_returns_BadRequest_status(string expectedMethod, string expectedPath, string expectedUrlParameters, string expectedFormParameters, string expectedBody)
+        [TestCase("POST", Method.POST, "/resourcePath", "urlParam1=value1&urlParam2=value2", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("POST", Method.POST, "/resourcePath", "urlParam=incorrectValue", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("POST", Method.POST, "/wrongResourcePath", "urlParam1=value1&urlParam2=value2", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("GET", Method.POST, "/resourcePath", "urlParam1=value1&urlParam2=value2", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("POST", Method.POST, "/resourcePath", "urlParam=incorrectValue", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("POST", Method.POST, "/wrongResourcePath", "urlParam1=value1&urlParam2=value2", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("POST", Method.POST, "/wrongResourcePath", "urlParam=incorrectValue", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("GET", Method.GET, "/wrongResourcePath", "urlParam1=value1&urlParam2=value2", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("GET", Method.GET, "/resourcePath", "urlParam=incorrectValue", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("GET", Method.GET, "/resourcePath", "urlParam1=value1&urlParam2=value2", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("POST", Method.POST, "/wrongResourcePath", "urlParam=incorrectValue", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("GET", Method.GET, "/resourcePath", "urlParam=incorrectValue", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("GET", Method.GET, "/wrongResourcePath", "urlParam1=value1&urlParam2=value2", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("GET", Method.GET, "/wrongResourcePath", "urlParam=incorrectValue", "formParam1=value1&formParam2=value2", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("GET", Method.GET, "/wrongResourcePath", "urlParam=incorrectValue", "formParam=incorrectValue", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase("POST", Method.POST, "/resourcePath", "urlParam1=value1&urlParam2=value2", "formParam1=value1&formParam2=value2", "")]
+        public void When_fake_request_has_one_or_more_incorrect_value_then_GetValidatedFakeResponse_method_returns_BadRequest_status(string expectedMethod, Method requestedMethod, string expectedPath, string expectedUrlParameters, string expectedFormParameters, string expectedBody)
         {
             var fakeRequestResponses = CreateFakeRequestResponses(
                 expectedMethod, expectedPath, expectedUrlParameters, expectedFormParameters, expectedBody);
             _fakeRequestResponseRepository.Stub(s => s.GetAll()).Return(fakeRequestResponses);
 
             var response = _requestValidator.GetValidatedFakeResponse(
-                RequestedMethod, new Url { Path = RequestedPath },
+                requestedMethod, new Url { Path = RequestedPath },
                 DynamicDictionaryParseParameters(RequestedUrlParams),
                 DynamicDictionaryParseParameters(RequestedFormParams),
                 RequestedBody
