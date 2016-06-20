@@ -28,11 +28,12 @@ namespace TinyFakeHostHelper.Tests.Unit
             _requestValidator = new RequestValidator(_fakeRequestResponseRepository);
         }
 
-        [TestCase(Method.GET, "urlParam1=value1&urlParam2=value2", "", "", "")]
-        [TestCase(Method.POST, "", "formParam1=value1&productId=PRD<<anything>>", "", "formParam1=value1&productId=PRD397041843")]
-        [TestCase(Method.POST, "", "", "{\"RequestedBody\":\"Test Body\"}", "{\"RequestedBody\":\"Test Body\"}")]
-        [TestCase(Method.POST, "", "", "{\"RequestedBody\":\"DateTime: <<ANYTHING>>\"}", "{\"RequestedBody\":\"DateTime: 2016-06-09T14:25:42-07:00\"}")]
-        public void When_fake_request_has_correct_value_then_GetValidatedFakeResponse_method_returns_fake_response(Method method, string urlParams, string formParams, string requestedBody, string receivedBody)
+        [TestCase(Method.GET, "/path", "/path", "urlParam1=value1&urlParam2=value2", "", "", "")]
+        [TestCase(Method.POST, "/products/<<Anything>>", "/products/56839571", "", "formParam1=value1&productId=PRD<<anything>>", "", "formParam1=value1&productId=PRD397041843")]
+        [TestCase(Method.POST, "/", "/", "", "", "{\"RequestedBody\":\"Test Body\"}", "{\"RequestedBody\":\"Test Body\"}")]
+        [TestCase(Method.POST, "/", "/", "", "", "{\"RequestedBody\":\"DateTime: <<ANYTHING>>\"}", "{\"RequestedBody\":\"DateTime: 2016-06-09T14:25:42-07:00\"}")]
+        public void When_fake_request_has_correct_value_then_GetValidatedFakeResponse_method_returns_fake_response
+            (Method method, string requestedPath, string receivedPath, string urlParams, string formParams, string requestedBody, string receivedBody)
         {
             var fakeResponse = new FakeResponse
                 {
@@ -41,13 +42,13 @@ namespace TinyFakeHostHelper.Tests.Unit
                     StatusCode = System.Net.HttpStatusCode.OK
                 };
             var fakeRequestResponses = CreateFakeRequestResponses(
-                method.ToString(), RequestedPath, urlParams, formParams, requestedBody,
+                method.ToString(), requestedPath, urlParams, formParams, requestedBody,
                 fakeResponse
             );
             _fakeRequestResponseRepository.Stub(s => s.GetAll()).Return(fakeRequestResponses);
 
             var response = _requestValidator.GetValidatedFakeResponse(
-                method, new Url { Path = RequestedPath },
+                method, new Url { Path = receivedPath },
                 DynamicDictionaryParseParameters(urlParams),
                 DynamicDictionaryParseParameters(formParams),
                 receivedBody
