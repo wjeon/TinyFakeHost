@@ -26,15 +26,10 @@ namespace TinyFakeHostHelper.Extensions
             return parameters;
         }
 
-        public static bool IsEqualTo(this string left, string right)
-        {
-            return (left ?? string.Empty) == (right ?? string.Empty);
-        }
-
         public static bool Matches(this string patternedValue, string value)
         {
-            var pattern = "^" + Regex.Replace(Regex.Escape(patternedValue), "<<anything>>", "(.*)", RegexOptions.IgnoreCase) + "$";
-            return Regex.IsMatch(value, pattern);
+            var pattern = "^" + Regex.Replace(Regex.Escape(patternedValue ?? string.Empty), "<<anything>>", "(.*)", RegexOptions.IgnoreCase) + "$";
+            return Regex.IsMatch(value ?? string.Empty, pattern);
         }
     }
 }
