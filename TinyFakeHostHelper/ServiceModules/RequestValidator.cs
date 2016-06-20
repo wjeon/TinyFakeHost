@@ -26,8 +26,8 @@ namespace TinyFakeHostHelper.ServiceModules
                 var fakeRequest = fakeRequestResponse.FakeRequest;
 
                 if (fakeRequest.Method.Equals(method) && fakeRequest.Path.Equals(url.Path) &&
-                    fakeRequest.UrlParameters.Equals(query) && fakeRequest.FormParameters.Equals(form) &&
-                    (fakeRequest.Body.IsEqualTo(body) || (method.IsBodyAllowedMethod() && fakeRequest.FormParameters.Equals(body)))
+                    fakeRequest.UrlParameters.Matches(query) && fakeRequest.FormParameters.Matches(form) &&
+                    (fakeRequest.Body.IsEqualTo(body) || (method.IsBodyAllowedMethod() && fakeRequest.FormParameters.Matches(body)))
                 ) {
                     var fakeResponse = fakeRequestResponse.FakeResponse;
 
