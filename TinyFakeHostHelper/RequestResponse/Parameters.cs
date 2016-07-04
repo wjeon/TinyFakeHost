@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Nancy;
+using TinyFakeHostHelper.Extensions;
 
 namespace TinyFakeHostHelper.RequestResponse
 {
@@ -9,18 +10,18 @@ namespace TinyFakeHostHelper.RequestResponse
         public Parameters() : base(new List<Parameter>()) { }
         public Parameters(IEnumerable<Parameter> parameters) : base(parameters) { }
 
-        public bool Equals(DynamicDictionary query)
+        public bool Matches(DynamicDictionary query)
         {
             if ((query == null || query.Count == 0) && Count == 0) return true;
 
             if (query == null || query.Count == 0 || Count == 0) return false;
 
-            var parameters = query.Keys.Select(key => new Parameter(key, query[key].ToString())).ToList();
+            var parameters = query.Keys.Select(key => new Parameter(key, DynamicValueToString(query[key]))).ToList();
 
-            return SequenceEqual(parameters);
+            return SequenceMatch(parameters);
         }
 
-        public bool Equals(string value)
+        public bool Matches(string value)
         {
             if (string.IsNullOrEmpty(value) && Count == 0) return true;
 
@@ -28,12 +29,28 @@ namespace TinyFakeHostHelper.RequestResponse
 
             var parameters = value.Split('&').Select(v => v.Split('=')).Select(p => new Parameter(p[0], p.Length > 1 ? p[1] : null)).ToList();
 
-            return SequenceEqual(parameters);
+            return SequenceMatch(parameters);
         }
 
-        private bool SequenceEqual(IEnumerable<Parameter> parameters)
+        private bool SequenceMatch(IEnumerable<Parameter> parameters)
         {
-            return this.OrderBy(r => r.Key).SequenceEqual(parameters.OrderBy(r => r.Key));
+            if (Count != parameters.Count()) return false;
+
+            var orderedThis = this.OrderBy(r => r.Key).ToList();
+            var orderedParameters = parameters.OrderBy(r => r.Key).ToList();
+
+            for (var i = 0; i < Count; i++)
+            {
+                if (orderedThis[i].Key != orderedParameters[i].Key || !orderedThis[i].Value.Matches(orderedParameters[i].Value))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static dynamic DynamicValueToString(dynamic dynamicValue)
+        {
+            return dynamicValue == null || dynamicValue == "Nancy.DynamicDictionaryValue" ? string.Empty : dynamicValue.ToString();
         }
 
         public override string ToString()

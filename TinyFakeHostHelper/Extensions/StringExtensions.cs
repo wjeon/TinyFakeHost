@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TinyFakeHostHelper.RequestResponse;
 
 namespace TinyFakeHostHelper.Extensions
@@ -25,9 +26,10 @@ namespace TinyFakeHostHelper.Extensions
             return parameters;
         }
 
-        public static bool IsEqualTo(this string left, string right)
+        public static bool Matches(this string patternedValue, string value)
         {
-            return (left ?? string.Empty) == (right ?? string.Empty);
+            var pattern = "^" + Regex.Replace(Regex.Escape(patternedValue ?? string.Empty), "<<anything>>", "(.*)", RegexOptions.IgnoreCase) + "$";
+            return Regex.IsMatch(value ?? string.Empty, pattern);
         }
     }
 }
