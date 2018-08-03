@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using TinyFakeHostHelper.Configuration;
-using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
@@ -12,38 +9,21 @@ namespace TinyFakeHostHelper.Fakers
     public class FluentFaker
     {
         private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
-        private readonly ITinyFakeHostConfiguration _configuration;
         private FakeRequestResponse _fakeRequestResponse;
-        private const string MaxNumberOfSegmentsExceptionMessage =
-            "The number of segments of the requested url path is bigger than MaximumNumberOfUrlPathSegments setting " +
-            "in the configuration or bigger than the default maximum number of url path segments";
 
-        public FluentFaker(IFakeRequestResponseRepository fakeRequestResponseRepository, ITinyFakeHostConfiguration configuration)
+        public FluentFaker(IFakeRequestResponseRepository fakeRequestResponseRepository)
         {
             _fakeRequestResponseRepository = fakeRequestResponseRepository;
-            _configuration = configuration;
         }
 
         public FluentFaker IfRequest(string path)
         {
-            GuardCondition_NumberOfPathSegmentsShouldNotBeBiggerThanMaxNumberOfPathSegmentsSetting(path);
-
             _fakeRequestResponse = new FakeRequestResponse
             {
                 FakeRequest = new FakeRequest { Path = path }
             };
 
             return this;
-        }
-
-        private void GuardCondition_NumberOfPathSegmentsShouldNotBeBiggerThanMaxNumberOfPathSegmentsSetting(string path)
-        {
-            var segmentCount = path.TrimStart('/').Split('/').Count();
-
-            if (segmentCount > _configuration.MaximumNumberOfUrlPathSegments)
-                throw new MaximumNumberOfUrlPathSegmentsException(
-                    MaxNumberOfSegmentsExceptionMessage
-                );
         }
 
         public FluentFaker WithMethod(Method method)

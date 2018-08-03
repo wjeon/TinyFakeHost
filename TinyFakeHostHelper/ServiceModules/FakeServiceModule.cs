@@ -23,20 +23,15 @@ namespace TinyFakeHostHelper.ServiceModules
 
             foreach (var routeBuilder in routeBuilders)
             {
-                BuildRoutesForRequest(routeBuilder);
+                BuildRoutesForRequest(routeBuilder, "/", "/{name*}");
             }
         }
 
-        private void BuildRoutesForRequest(RouteBuilder routeBuilder)
+        private void BuildRoutesForRequest(RouteBuilder routeBuilder, params string[] paths)
         {
-            routeBuilder["/"] = p => ReturnFakeResult();
-
-            var segments = string.Empty;
-
-            for (var i = 0; i < _tinyFakeHostConfiguration.MaximumNumberOfUrlPathSegments; i++)
+            foreach (var path in paths)
             {
-                segments += "/{segment" + i + "}";
-                routeBuilder[segments] = p => ReturnFakeResult();
+                routeBuilder[path] = p => ReturnFakeResult();
             }
         }
 
