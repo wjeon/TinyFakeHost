@@ -46,6 +46,32 @@ namespace TinyFakeHostHelper.Tests.Integration
             Assert.AreEqual(responseContent, response.Content);
         }
 
+        [Test]
+        public void When_a_web_client_queries_the_fake_web_service_with_body_it_returns_a_fake_content_correctly()
+        {
+            const string responseContent = @"{""messageId"":389317,""messageTitle"":""Product B"",""dateCreated"":""2018-07-22T19:26:35-07:00""}";
+            const string resourcePath = "/vendors/9876-5432-1098-7654/questions";
+            const string body = @"{""title"":""Question"",""message"":""How much is the item number 1234""}";
+
+            Faker.Fake(f => f
+                .IfRequest(resourcePath)
+                .WithMethod(RequestResponse.Method.POST)
+                .WithBody(body)
+                .ThenReturn(new FakeResponse { ContentType = "application/json", Content = responseContent, StatusCode = HttpStatusCode.Created })
+            );
+
+            var request = new RestRequest(resourcePath, Method.POST);
+
+            request.AddParameter(
+                new RestSharp.Parameter { Type = ParameterType.RequestBody, Name = "application/json", Value = body });
+
+            TinyFakeHost.RequestedQueryPrint = true;
+
+            var response = RestClient.Execute(request);
+
+            Assert.AreEqual(responseContent, response.Content);
+        }
+
         private static RequestResponse.Method TinyFakeHostMethod(string method)
         {
             return (RequestResponse.Method)Enum.Parse(typeof(RequestResponse.Method), method);
