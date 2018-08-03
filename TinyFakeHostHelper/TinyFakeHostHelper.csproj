@@ -56,7 +56,6 @@
     <Compile Include="Configuration\ITinyFakeHostConfiguration.cs" />
     <Compile Include="Configuration\TinyFakeHostConfiguration.cs" />
     <Compile Include="Exceptions\AssertionException.cs" />
-    <Compile Include="Exceptions\MaximumNumberOfUrlPathSegmentsException.cs" />
     <Compile Include="Exceptions\UniqueIdException.cs" />
     <Compile Include="Extensions\DynamicDictionaryExtensions.cs" />
     <Compile Include="Extensions\GuidExtensions.cs" />

@@ -28,17 +28,6 @@ https://www.nuget.org/packages/TinyFakeHost/
 
 When two fake hosts run concurrently with the same port number, one fake host waits until the other finishes.
 
-***Configuration:***
-
-The default maximum number of the resource path segments you can request is 10. If you want to request the resource path with more than 10 segments, you need to add `MaximumNumberOfPathSegments` app setting entry with bigger number value.
-
-E.g.
-```
-<appSettings>
-  <add key="MaximumNumberOfPathSegments" value="15" />
-</appSettings>
-```
-
 ***Url Reservation:***
 
 TinyFakeHost reserves the url automatically.

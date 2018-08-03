@@ -2,7 +2,6 @@
 using System.Linq;
 using NUnit.Framework;
 using Rhino.Mocks;
-using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Fakers;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
@@ -20,7 +19,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         public void SetUp()
         {
             _repository = new FakeRequestResponseRepository(new DateTimeProvider());
-            _faker = new RequestResponseFaker(_repository, new TinyFakeHostConfiguration());
+            _faker = new RequestResponseFaker(_repository);
         }
 
         [Test]
@@ -39,7 +38,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         {
             var id = Guid.NewGuid();
             var repository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
-            _faker = new RequestResponseFaker(repository, new TinyFakeHostConfiguration());
+            _faker = new RequestResponseFaker(repository);
 
             _faker.DeleteFakeById(id);
 
@@ -73,7 +72,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         public void DeleteAllFakes_method_calls_DeleteAll_method_in_FakeRequestResponseRepository()
         {
             var repository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
-            _faker = new RequestResponseFaker(repository, new TinyFakeHostConfiguration());
+            _faker = new RequestResponseFaker(repository);
 
             _faker.DeleteAllFakes();
 

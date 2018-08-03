@@ -2,14 +2,11 @@
 using System.Net;
 using NUnit.Framework;
 using Rhino.Mocks;
-using TinyFakeHostHelper.Configuration;
-using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Fakers;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 using TinyFakeHostHelper.Supports;
 using TinyFakeHostHelper.Tests.Unit.Extensions;
-using TinyFakeHostHelper.Tests.Unit.Helpers;
 
 namespace TinyFakeHostHelper.Tests.Unit
 {
@@ -17,7 +14,6 @@ namespace TinyFakeHostHelper.Tests.Unit
     public class FluentFakerTests
     {
         private IFakeRequestResponseRepository _repository;
-        private ITinyFakeHostConfiguration _configuration;
         private FluentFaker _fluentFaker;
 
         [SetUp]
@@ -25,9 +21,8 @@ namespace TinyFakeHostHelper.Tests.Unit
         {
             var dateTimeProvider = MockRepository.GenerateMock<IDateTimeProvider>();
             _repository = new FakeRequestResponseRepository(dateTimeProvider);
-            _configuration = new TinyFakeHostConfiguration();
 
-            _fluentFaker = new FluentFaker(_repository, _configuration);
+            _fluentFaker = new FluentFaker(_repository);
         }
 
         [Test]
@@ -71,27 +66,6 @@ namespace TinyFakeHostHelper.Tests.Unit
                 .ThenReturn(fakeResponse);
 
             AssertThatFakeRequestAndResponseAreStored(Method.GET, path, null, null, string.Empty, content, contentType, statusCode, reasonPhrase);
-        }
-
-        [TestCase("/vendors")]
-        [TestCase("/vendors/9876-5432-1098-7654")]
-        public void When_fluent_faker_fakes_request_path_with_number_of_segments_that_is_equal_or_less_than_the_number_configured_it_does_not_throw_exception(string requestPath)
-        {
-            AppSettingHelper.AddAppSettingInMemory("MaximumNumberOfPathSegments", "2");
-
-            Assert.DoesNotThrow(() => _fluentFaker.IfRequest(requestPath));
-
-            AppSettingHelper.RemoveAppSettingInMemory("MaximumNumberOfPathSegments");
-        }
-
-        [Test]
-        public void When_fluent_faker_fakes_request_path_with_number_of_segments_that_is_more_than_the_number_configured_it_throws_MaximumNumberOfUrlPathSegmentsException()
-        {
-            AppSettingHelper.AddAppSettingInMemory("MaximumNumberOfPathSegments", "2");
-
-            Assert.Throws<MaximumNumberOfUrlPathSegmentsException>(() => _fluentFaker.IfRequest("/vendors/9876-5432-1098-7654/products"));
-
-            AppSettingHelper.RemoveAppSettingInMemory("MaximumNumberOfPathSegments");
         }
 
         private void AssertThatFakeRequestAndResponseAreStored

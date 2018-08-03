@@ -1,5 +1,4 @@
 ﻿using System;
-using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Persistence;
 
 namespace TinyFakeHostHelper.Fakers
@@ -9,10 +8,10 @@ namespace TinyFakeHostHelper.Fakers
         private readonly IFakeRequestResponseRepository _fakeRequestResponseRepository;
         private readonly FluentFaker _fluentFaker;
 
-        public RequestResponseFaker(IFakeRequestResponseRepository fakeRequestResponseRepository, ITinyFakeHostConfiguration configuration)
+        public RequestResponseFaker(IFakeRequestResponseRepository fakeRequestResponseRepository)
         {
             _fakeRequestResponseRepository = fakeRequestResponseRepository;
-            _fluentFaker = new FluentFaker(_fakeRequestResponseRepository, configuration);
+            _fluentFaker = new FluentFaker(_fakeRequestResponseRepository);
         }
 
         /// <summary>
