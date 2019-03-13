@@ -133,7 +133,7 @@ namespace TinyFakeHostHelper.Tests.Integration
 
             var response = CallFakeService(resourcePath, 3000);
 
-            Assert.AreEqual(response.ResponseStatus, ResponseStatus.TimedOut);
+            Assert.IsTrue(response.ErrorMessage.Contains("The operation has timed out"));
         }
 
         [Test]

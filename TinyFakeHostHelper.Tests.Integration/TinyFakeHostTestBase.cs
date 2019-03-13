@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+using System;
+using NUnit.Framework;
 using TinyFakeHostHelper.Fakers;
 
 namespace TinyFakeHostHelper.Tests.Integration
@@ -11,6 +12,12 @@ namespace TinyFakeHostHelper.Tests.Integration
         [TestFixtureSetUp]
         public void FixtureSetUp()
         {
+            var port = new Random().Next(60000, 60020);
+
+            BaseUri = string.Format("http://localhost:{0}/", port);
+
+            Console.WriteLine(BaseUri);
+
             TinyFakeHost = new TinyFakeHost(BaseUri);
 
             TinyFakeHost.Start();

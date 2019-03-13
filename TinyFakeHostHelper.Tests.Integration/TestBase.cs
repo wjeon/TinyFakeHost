@@ -5,7 +5,7 @@ namespace TinyFakeHostHelper.Tests.Integration
 {
     public abstract class TestBase
     {
-        protected const string BaseUri = "http://localhost:5432/";
+        protected static string BaseUri;
         protected IRestClient RestClient;
 
         [SetUp]

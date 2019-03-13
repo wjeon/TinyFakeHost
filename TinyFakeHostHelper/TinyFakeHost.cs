@@ -27,7 +27,7 @@ namespace TinyFakeHostHelper
             _hostId = Guid.NewGuid();
             _fakeHostConfig = fakeHostConfig ?? new TinyFakeHostConfiguration();
             var bootstrapper = new TinyFakeHostBootstrapper(_fakeHostConfig);
-            var nancyHostConfig = new HostConfiguration { UrlReservations = { CreateAutomatically = true } };
+            var nancyHostConfig = new HostConfiguration { RewriteLocalhost = false };
 
             _nancyHost = new NancyHost(bootstrapper, nancyHostConfig, new Uri(uri.TrimEnd('/') + "/"));
 
@@ -68,7 +68,7 @@ namespace TinyFakeHostHelper
                 }
                 catch (HttpListenerException e)
                 {
-                    if (e.Message.StartsWith("Failed to listen on prefix 'http://+:") &&
+                    if (e.Message.StartsWith("Failed to listen on prefix 'http") &&
                         e.Message.EndsWith("/' because it conflicts with an existing registration on the machine."))
                     {
                         Console.WriteLine(@"Fake Host '{0}' conflicted with other host. Wait for the other host stops.",

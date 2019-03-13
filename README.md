@@ -28,18 +28,6 @@ https://www.nuget.org/packages/TinyFakeHost/
 
 When two fake hosts run concurrently with the same port number, one fake host waits until the other finishes.
 
-***Url Reservation:***
-
-TinyFakeHost reserves the url automatically.
-You may try reserving the url manually with sufficient privileges if it is not reserved automatically with any reason like your automated test is running under insufficient privileges.
-You can use `netsh http add urlacl` command to manually reserve the rul.
-
-E.g.
-```
-netsh http add urlacl url=http://+:5432/ user=everyone
-```
-For more information about `netsh http add urlacl` command, please visit https://msdn.microsoft.com/en-us/library/windows/desktop/cc307223(v=vs.85).aspx
-
 Examples:
 ---------
 ***Start and stop a fake host***
