@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using RestSharp;
 
 namespace TinyFakeHostHelper.Tests.Integration
@@ -6,12 +7,18 @@ namespace TinyFakeHostHelper.Tests.Integration
     [TestFixture]
     public abstract class TinyFakeHostTestBase
     {
-        protected const string BaseUri = "http://localhost:5432/";
+        protected static string BaseUri;
         protected IRestClient RestClient;
 
         [SetUp]
         public void SetUp()
         {
+            var port = new Random().Next(60000, 60020);
+
+            BaseUri = string.Format("http://localhost:{0}/", port);
+
+            Console.WriteLine(BaseUri);
+
             RestClient = new RestClient(BaseUri);
         }
 
