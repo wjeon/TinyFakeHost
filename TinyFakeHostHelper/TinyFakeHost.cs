@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Threading;
-using Nancy.Hosting.Self;
-using Nancy.TinyIoc;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using TinyFakeHostHelper.Asserters;
 using TinyFakeHostHelper.Configuration;
 using TinyFakeHostHelper.Extensions;
@@ -16,22 +18,26 @@ namespace TinyFakeHostHelper
 {
     public class TinyFakeHost : IDisposable
     {
-        private readonly NancyHost _nancyHost;
+        private readonly IWebHost _tinyHost;
         private bool _hostStarted;
         private Guid _hostId;
-        private readonly TinyIoCContainer _container;
         private readonly ITinyFakeHostConfiguration _fakeHostConfig;
 
-        public TinyFakeHost(string uri, ITinyFakeHostConfiguration fakeHostConfig = null)
+        public TinyFakeHost(string uri, ITinyFakeHostConfiguration fakeHostConfig = null) :
+            this(new WebHostBuilder().UseKestrel().UseUrls(uri.TrimEnd('/') + "/"), fakeHostConfig)
+        {
+        }
+
+        public TinyFakeHost(IWebHostBuilder webHostBuilder, ITinyFakeHostConfiguration fakeHostConfig = null)
         {
             _hostId = Guid.NewGuid();
+
             _fakeHostConfig = fakeHostConfig ?? new TinyFakeHostConfiguration();
-            var bootstrapper = new TinyFakeHostBootstrapper(_fakeHostConfig);
-            var nancyHostConfig = new HostConfiguration { RewriteLocalhost = false };
 
-            _nancyHost = new NancyHost(bootstrapper, nancyHostConfig, new Uri(uri.TrimEnd('/') + "/"));
-
-            _container = bootstrapper.GetTinyIoCContainer();
+            _tinyHost = webHostBuilder
+                        .ConfigureServices(s => s.AddSingleton(_fakeHostConfig))
+                        .UseStartup<TinyFakeHostBootstrapper>()
+                        .Build();
         }
 
         public bool RequestedQueryPrint
@@ -47,8 +53,8 @@ namespace TinyFakeHostHelper
 
             if (_hostStarted) return;
 
-            _nancyHost.Dispose();
             throw new Exception("Fake host failed to start because it has conflicted with other host too long time.");
+            _tinyHost.Dispose();
         }
 
         private void TryStart()
@@ -83,34 +89,34 @@ namespace TinyFakeHostHelper
 
         public RequestResponseFaker GetFaker()
         {
-            return new RequestResponseFaker(_container.Resolve<IFakeRequestResponseRepository>());
+            return new RequestResponseFaker(_tinyHost.Services.GetService<IFakeRequestResponseRepository>());
         }
 
         public RequestedQueryAsserter GetAsserter()
         {
-            return new RequestedQueryAsserter(_container);
+            return new RequestedQueryAsserter(_tinyHost.Services);
         }
 
         public IEnumerable<FakeRequest> GetRequestedQueries()
         {
-            var requestedQueryRepository = _container.Resolve<IRequestedQueryRepository>();
+            var requestedQueryRepository = _tinyHost.Services.GetService<IRequestedQueryRepository>();
             return requestedQueryRepository.GetAll();
         }
 
-        public void Stop()
+        public void Stop(TimeSpan? timeout = null)
         {
             if (!_hostStarted)
             {
                 Console.WriteLine(@"Fake Host '{0}' not started.", _hostId.FirstSegment());
                 return;
             }
-            _nancyHost.Stop();
             Console.WriteLine(@"Fake Host '{0}' stopped.", _hostId.FirstSegment());
+            _tinyHost.StopAsync(timeout ?? TimeSpan.FromMilliseconds(100)).Wait();
         }
 
         public void Dispose()
         {
-            _nancyHost.Dispose();
+            _tinyHost.Dispose();
         }
     }
 }

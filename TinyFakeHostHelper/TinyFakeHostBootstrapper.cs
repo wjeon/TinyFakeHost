@@ -1,36 +1,24 @@
-﻿using Nancy;
-using Nancy.Bootstrapper;
-using Nancy.TinyIoc;
-using TinyFakeHostHelper.Configuration;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.ServiceModules;
 using TinyFakeHostHelper.Supports;
 
 namespace TinyFakeHostHelper
 {
-    public class TinyFakeHostBootstrapper : DefaultNancyBootstrapper
+    public class TinyFakeHostBootstrapper
     {
-        private TinyIoCContainer _container;
-        private readonly ITinyFakeHostConfiguration _fakeHostConfiguration;
-
-        public TinyFakeHostBootstrapper(ITinyFakeHostConfiguration fakeHostConfiguration)
+        public void ConfigureServices(IServiceCollection services)
         {
-            _fakeHostConfiguration = fakeHostConfiguration;
+            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+            services.AddScoped<IFakeRequestResponseRepository, FakeRequestResponseRepository>();
+            services.AddScoped<IRequestedQueryRepository, RequestedQueryRepository>();
+            services.AddTransient<IRequestValidator, RequestValidator>();
         }
 
-        public TinyIoCContainer GetTinyIoCContainer()
+        public void Configure(IApplicationBuilder app)
         {
-            return _container;
-        }
-
-        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
-        {
-            container.Register(_fakeHostConfiguration);
-            container.Register<IDateTimeProvider, DateTimeProvider>();
-            container.Register<IFakeRequestResponseRepository, FakeRequestResponseRepository>();
-            container.Register<IRequestedQueryRepository, RequestedQueryRepository>();
-            container.Register<IRequestValidator, RequestValidator>();
-            _container = container;
+            app.UseMiddleware<FakeServiceModule>();
         }
     }
 }

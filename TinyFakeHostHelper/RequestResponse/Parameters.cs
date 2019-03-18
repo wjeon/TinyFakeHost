@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Nancy;
+using Microsoft.Extensions.Primitives;
 using TinyFakeHostHelper.Extensions;
 
 namespace TinyFakeHostHelper.RequestResponse
@@ -10,13 +10,15 @@ namespace TinyFakeHostHelper.RequestResponse
         public Parameters() : base(new List<Parameter>()) { }
         public Parameters(IEnumerable<Parameter> parameters) : base(parameters) { }
 
-        public bool Matches(DynamicDictionary query)
+        public bool Matches(IEnumerable<KeyValuePair<string, StringValues>> query)
         {
-            if ((query == null || query.Count == 0) && Count == 0) return true;
+            var keyValuePairs = query ?? Enumerable.Empty<KeyValuePair<string, StringValues>>();
 
-            if (query == null || query.Count == 0 || Count == 0) return false;
+            if (!keyValuePairs.Any() && Count == 0) return true;
 
-            var parameters = query.Keys.Select(key => new Parameter(key, DynamicValueToString(query[key]))).ToList();
+            if (!keyValuePairs.Any() || Count == 0) return false;
+
+            var parameters = keyValuePairs.Select(q => new Parameter(q.Key, q.Value)).ToList();
 
             return SequenceMatch(parameters);
         }
@@ -46,11 +48,6 @@ namespace TinyFakeHostHelper.RequestResponse
             }
 
             return true;
-        }
-
-        private static dynamic DynamicValueToString(dynamic dynamicValue)
-        {
-            return dynamicValue == null || dynamicValue == "Nancy.DynamicDictionaryValue" ? string.Empty : dynamicValue.ToString();
         }
 
         public override string ToString()

@@ -1,14 +1,14 @@
 ﻿using System;
-using Nancy.TinyIoc;
+using Microsoft.Extensions.DependencyInjection;
 using TinyFakeHostHelper.Persistence;
 
 namespace TinyFakeHostHelper.Asserters
 {
     public class RequestedQueryAsserter
     {
-        private readonly TinyIoCContainer _container;
+        private readonly IServiceProvider _container;
 
-        public RequestedQueryAsserter(TinyIoCContainer container)
+        public RequestedQueryAsserter(IServiceProvider container)
         {
             _container = container;
         }
@@ -21,7 +21,7 @@ namespace TinyFakeHostHelper.Asserters
         /// </param>
         public void Assert(Func<FluentAsserter, FluentAsserter> fluentAssertion)
         {
-            var requestedQueryRepository = _container.Resolve<IRequestedQueryRepository>();
+            var requestedQueryRepository = _container.GetService<IRequestedQueryRepository>();
 
             fluentAssertion(new FluentAsserter(requestedQueryRepository));
         }

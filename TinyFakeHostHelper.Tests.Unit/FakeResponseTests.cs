@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
-using Nancy;
 using TinyFakeHostHelper.RequestResponse;
+using TinyFakeHostHelper.ServiceModules;
 using TinyFakeHostHelper.Tests.Unit.Extensions;
 using HttpStatusCode = System.Net.HttpStatusCode;
 
@@ -27,15 +27,17 @@ namespace TinyFakeHostHelper.Tests.Unit
                 ReasonPhrase = reasonPhrase
             };
 
-            var convertedResponse = fakeRespone.ToNancyResponse();
+            var convertedResponse = fakeRespone.ToResponse(string.Empty);
 
-            Response expectedNancyResponse = content;
-            expectedNancyResponse.ContentType = contentType;
-            expectedNancyResponse.Headers = headers;
-            expectedNancyResponse.StatusCode = Nancy.HttpStatusCode.OK;
-            expectedNancyResponse.ReasonPhrase = reasonPhrase;
+            var expectedHttpResponse = new FakeHttpResponse
+            {
+                Body = content,
+                ContentType = contentType,
+                Headers = headers,
+                StatusCode = (int)HttpStatusCode.OK
+            };
 
-            Assert.IsTrue(convertedResponse.IsEqualTo(expectedNancyResponse));
+            Assert.IsTrue(convertedResponse.IsEqualTo(expectedHttpResponse));
         }
     }
 }

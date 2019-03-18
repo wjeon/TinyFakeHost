@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using Microsoft.Extensions.Primitives;
 using NUnit.Framework;
-using Nancy;
 using Rhino.Mocks;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 using TinyFakeHostHelper.ServiceModules;
-using TinyFakeHostHelper.Tests.Unit.Extensions;
 
 namespace TinyFakeHostHelper.Tests.Unit
 {
@@ -49,14 +49,14 @@ namespace TinyFakeHostHelper.Tests.Unit
             _fakeRequestResponseRepository.Stub(s => s.GetAll()).Return(fakeRequestResponses);
 
             var response = _requestValidator.GetValidatedFakeResponse(
-                method, new Url { Path = receivedPath },
-                DynamicDictionaryParseParameters(urlParams),
-                DynamicDictionaryParseParameters(formParams),
+                method, receivedPath,
+                ParseToKeyValuePairParameters(urlParams),
+                ParseToKeyValuePairParameters(formParams),
                 receivedBody
             );
 
-            Assert.That(response.StatusCode, Is.EqualTo(fakeResponse.ToNancyResponse().StatusCode));
-            Assert.That(response.Content(), Is.EqualTo(fakeResponse.Content));
+            Assert.That(response.StatusCode, Is.EqualTo(fakeResponse.ToResponse(string.Empty).StatusCode));
+            Assert.That(response.Body, Is.EqualTo(fakeResponse.Content));
             Assert.That(response.ContentType, Is.EqualTo(fakeResponse.ContentType));
         }
 
@@ -83,13 +83,13 @@ namespace TinyFakeHostHelper.Tests.Unit
             _fakeRequestResponseRepository.Stub(s => s.GetAll()).Return(fakeRequestResponses);
 
             var response = _requestValidator.GetValidatedFakeResponse(
-                requestedMethod, new Url { Path = RequestedPath },
-                DynamicDictionaryParseParameters(RequestedUrlParams),
-                DynamicDictionaryParseParameters(RequestedFormParams),
+                requestedMethod, RequestedPath,
+                ParseToKeyValuePairParameters(RequestedUrlParams),
+                ParseToKeyValuePairParameters(RequestedFormParams),
                 RequestedBody
             );
 
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+            Assert.That(response.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
         }
 
         [Test]
@@ -109,13 +109,13 @@ namespace TinyFakeHostHelper.Tests.Unit
             _fakeRequestResponseRepository.Stub(s => s.GetAll()).Return(fakeRequestResponses);
 
             var response = _requestValidator.GetValidatedFakeResponse(
-                RequestedMethod, new Url { Path = RequestedPath },
-                DynamicDictionaryParseParameters(RequestedUrlParams),
-                DynamicDictionaryParseParameters(RequestedFormParams),
+                RequestedMethod, RequestedPath,
+                ParseToKeyValuePairParameters(RequestedUrlParams),
+                ParseToKeyValuePairParameters(RequestedFormParams),
                 emptyBody
             );
 
-            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            Assert.That(response.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
         }
 
         private static IEnumerable<FakeRequestResponse> CreateFakeRequestResponses(string expectedMethod, string expectedPath, string expectedUrlParameters, string expectedFormParameters, string expectedBody, FakeResponse fakeResponse = null, DateTime? created = null)
@@ -150,16 +150,16 @@ namespace TinyFakeHostHelper.Tests.Unit
             return parameters;
         }
 
-        public static DynamicDictionary DynamicDictionaryParseParameters(string parameterString)
+        public static IEnumerable<KeyValuePair<string, StringValues>> ParseToKeyValuePairParameters(string parameterString)
         {
             if (string.IsNullOrEmpty(parameterString))
-                return new DynamicDictionary();
+                return new List<KeyValuePair<string, StringValues>>();
 
-            var parameters = new DynamicDictionary();
+            var parameters = new List<KeyValuePair<string, StringValues>>();
 
             foreach (var @params in parameterString.Split('&').Select(parameter => parameter.Split('=')))
             {
-                parameters.Add(@params[0], @params[1]);
+                parameters.Add(new KeyValuePair<string, StringValues>(@params[0], @params[1]));
             }
 
             return parameters;

@@ -1,10 +1,11 @@
-﻿using Nancy;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Primitives;
 using TinyFakeHostHelper.RequestResponse;
 
 namespace TinyFakeHostHelper.ServiceModules
 {
     public interface IRequestValidator
     {
-        Response GetValidatedFakeResponse(Method method, Url url, DynamicDictionary query, DynamicDictionary form, string body);
+        FakeHttpResponse GetValidatedFakeResponse(Method method, string url, IEnumerable<KeyValuePair<string, StringValues>> query, IEnumerable<KeyValuePair<string, StringValues>> form, string body);
     }
 }

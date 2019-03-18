@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Primitives;
 using NUnit.Framework;
-using Nancy;
 using TinyFakeHostHelper.RequestResponse;
 
 namespace TinyFakeHostHelper.Tests.Unit
@@ -19,17 +19,23 @@ namespace TinyFakeHostHelper.Tests.Unit
         }
 
         [Test]
-        public void When_Parameters_and_dynamic_dictionary_for_requested_parameters_are_equal_Matches_method_returns_true()
+        public void When_Parameters_and_key_value_pair_list_for_requested_parameters_are_equal_Matches_method_returns_true()
         {
-            var requestedParameters = new DynamicDictionary { {"KeyB", "ValueB"}, {"KeyA", "ValueA"} };
+            var requestedParameters = new List<KeyValuePair<string, StringValues>>
+            {
+                new KeyValuePair<string, StringValues> ("KeyB", "ValueB"), new KeyValuePair<string, StringValues>("KeyA", "ValueA")
+            };
 
             Assert.IsTrue(_parameters.Matches(requestedParameters));
         }
 
         [Test]
-        public void When_Parameters_and_dynamic_dictionary_for_requested_parameters_are_not_equal_Matches_method_returns_false()
+        public void When_Parameters_and_key_value_pair_list_for_requested_parameters_are_not_equal_Matches_method_returns_false()
         {
-            var requestedParameters = new DynamicDictionary { { "KeyB", "ValueA" }, { "KeyA", "ValueB" } };
+            var requestedParameters = new List<KeyValuePair<string, StringValues>>
+            {
+                new KeyValuePair<string, StringValues> ("KeyB", "ValueA"), new KeyValuePair<string, StringValues>("KeyA", "ValueB")
+            };
 
             Assert.IsFalse(_parameters.Matches(requestedParameters));
         }
@@ -39,15 +45,18 @@ namespace TinyFakeHostHelper.Tests.Unit
         {
             var parameters = new List<Parameter> { new Parameter("KeyA", "ValueA"), new Parameter("KeyB", "<<ANYTHING>>") };
             _parameters = new Parameters(parameters);
-            var requestedParameters = new DynamicDictionary { { "KeyB", "ABCxyz" }, { "KeyA", "ValueA" } };
+            var requestedParameters = new List<KeyValuePair<string, StringValues>>
+            {
+                new KeyValuePair<string, StringValues> ("KeyB", "ABCxyz"), new KeyValuePair<string, StringValues>("KeyA", "ValueA")
+            };
 
             Assert.IsTrue(_parameters.Matches(requestedParameters));
         }
 
         [Test]
-        public void When_Parameters_has_value_and_dynamic_dictionary_for_requested_parameters_is_null_Matches_method_returns_false()
+        public void When_Parameters_has_value_and_key_value_pair_list_for_requested_parameters_is_null_Matches_method_returns_false()
         {
-            DynamicDictionary requestedParameters = null;
+            IEnumerable<KeyValuePair<string, StringValues>> requestedParameters = null;
 
             Assert.IsFalse(_parameters.Matches(requestedParameters));
         }

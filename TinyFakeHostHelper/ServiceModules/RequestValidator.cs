@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using System.Threading;
-using Nancy;
+using Microsoft.Extensions.Primitives;
 using TinyFakeHostHelper.Extensions;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
@@ -16,9 +18,11 @@ namespace TinyFakeHostHelper.ServiceModules
             _fakeRequestResponseRepository = fakeRequestResponseRepository;
         }
 
-        public Response GetValidatedFakeResponse(Method method, Url url, DynamicDictionary query, DynamicDictionary form, string body)
+        public FakeHttpResponse GetValidatedFakeResponse(Method method, string url, IEnumerable<KeyValuePair<string, StringValues>> query, IEnumerable<KeyValuePair<string, StringValues>> form, string body)
         {
-            var response = new Response { ContentType = "application/json" };
+            const string defaultContentType = "application/json";
+
+            var response = new FakeHttpResponse { ContentType = defaultContentType };
 
             var requestFound = false;
 
@@ -26,22 +30,22 @@ namespace TinyFakeHostHelper.ServiceModules
             {
                 var fakeRequest = fakeRequestResponse.FakeRequest;
 
-                if (fakeRequest.Method.Equals(method) && fakeRequest.Path.Matches(url.Path) &&
+                if (fakeRequest.Method.Equals(method) && fakeRequest.Path.Matches(url) &&
                     fakeRequest.UrlParameters.Matches(query) && fakeRequest.FormParameters.Matches(form) &&
-                    (fakeRequest.Body.Matches(body) || (method.IsBodyAllowedMethod() && fakeRequest.FormParameters.Matches(body)))
+                    (fakeRequest.Body.Matches(body) || method.IsBodyAllowedMethod() && fakeRequest.FormParameters.Matches(body))
                 ) {
                     var fakeResponse = fakeRequestResponse.FakeResponse;
 
                     if (fakeResponse.MillisecondsSleep > 0)
                         Thread.Sleep(fakeResponse.MillisecondsSleep);
 
-                    response = fakeResponse.ToNancyResponse();
+                    response = fakeResponse.ToResponse(defaultContentType);
                     requestFound = true;
                     break;
                 }
             }
 
-            if (!requestFound) response.StatusCode = HttpStatusCode.BadRequest;
+            if (!requestFound) response.StatusCode = (int)HttpStatusCode.BadRequest;
 
             return response;
         }
