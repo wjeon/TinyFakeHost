@@ -9,7 +9,7 @@ namespace TinyFakeHostHelper.Tests.Integration
         protected TinyFakeHost TinyFakeHost;
         protected RequestResponseFaker Faker;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void FixtureSetUp()
         {
             var port = new Random().Next(60000, 60020);
@@ -25,7 +25,7 @@ namespace TinyFakeHostHelper.Tests.Integration
             Faker = TinyFakeHost.GetFaker();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void FixtureTearDown()
         {
             TinyFakeHost.Stop();

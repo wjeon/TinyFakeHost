@@ -9,7 +9,6 @@ using TinyFakeHostHelper.Supports;
 
 namespace TinyFakeHostHelper.Tests.Unit
 {
-    [TestFixture]
     public class RequestResponseFakerTests
     {
         private IFakeRequestResponseRepository _repository;
