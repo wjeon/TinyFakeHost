@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using FakeItEasy;
 using NUnit.Framework;
-using Rhino.Mocks;
 using TinyFakeHostHelper.Exceptions;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
@@ -20,7 +20,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         [SetUp]
         public void SetUp()
         {
-            _dateTimeProvider = MockRepository.GenerateMock<IDateTimeProvider>();
+            _dateTimeProvider = A.Fake<IDateTimeProvider>();
             _fakeRequestResponseRepository = new FakeRequestResponseRepository(_dateTimeProvider);
         }
 
@@ -47,7 +47,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         public void It_adds_FakeRequestResponse_with_Created_property_sets_to_current_time()
         {
             var currentTime = new DateTimeOffset(2016, 5, 29, 6, 7, 21, TimeSpan.FromHours(-7));
-            _dateTimeProvider.Stub(s => s.UtcNow).Return(currentTime);
+            A.CallTo(() => _dateTimeProvider.UtcNow).Returns(currentTime);
 
             var fake = CreateFakeRequestResponseWith("A", HttpStatusCode.OK);
             _fakeRequestResponseRepository.Add(fake);

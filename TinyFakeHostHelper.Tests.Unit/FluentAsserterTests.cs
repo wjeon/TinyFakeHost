@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using FakeItEasy;
 using NUnit.Framework;
-using Rhino.Mocks;
 using TinyFakeHostHelper.Asserters;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
@@ -83,7 +83,7 @@ namespace TinyFakeHostHelper.Tests.Unit
 
         private void SetRepositoryToReturnRequestedQueries()
         {
-            _requestedQueryRepository = MockRepository.GenerateStub<IRequestedQueryRepository>();
+            _requestedQueryRepository = A.Fake<IRequestedQueryRepository>();
 
             var requestedQueryWithResourcePathAndUrlParameter = new FakeRequest
             {
@@ -106,7 +106,7 @@ namespace TinyFakeHostHelper.Tests.Unit
                 requestedQueryWithResourcePathOnly
             };
 
-            _requestedQueryRepository.Stub(s => s.GetAll()).Return(requestedQueries);
+            A.CallTo(() => _requestedQueryRepository.GetAll()).Returns(requestedQueries);
         }
     }
 }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using FakeItEasy;
 using Microsoft.Extensions.Primitives;
 using NUnit.Framework;
-using Rhino.Mocks;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
 using TinyFakeHostHelper.ServiceModules;
@@ -25,7 +25,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         [SetUp]
         public void SetUp()
         {
-            _fakeRequestResponseRepository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
+            _fakeRequestResponseRepository = A.Fake<IFakeRequestResponseRepository>();
             _requestValidator = new RequestValidator(_fakeRequestResponseRepository);
         }
 
@@ -46,7 +46,7 @@ namespace TinyFakeHostHelper.Tests.Unit
                 method.ToString(), requestedPath, urlParams, formParams, requestedBody,
                 fakeResponse
             );
-            _fakeRequestResponseRepository.Stub(s => s.GetAll()).Return(fakeRequestResponses);
+            A.CallTo(() => _fakeRequestResponseRepository.GetAll()).Returns(fakeRequestResponses);
 
             var response = _requestValidator.GetValidatedFakeResponse(
                 method, receivedPath,
@@ -80,7 +80,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         {
             var fakeRequestResponses = CreateFakeRequestResponses(
                 expectedMethod, expectedPath, expectedUrlParameters, expectedFormParameters, expectedBody);
-            _fakeRequestResponseRepository.Stub(s => s.GetAll()).Return(fakeRequestResponses);
+            A.CallTo(() => _fakeRequestResponseRepository.GetAll()).Returns(fakeRequestResponses);
 
             var response = _requestValidator.GetValidatedFakeResponse(
                 requestedMethod, RequestedPath,
@@ -106,7 +106,7 @@ namespace TinyFakeHostHelper.Tests.Unit
                 RequestedMethod.ToString(), RequestedPath, RequestedUrlParams, RequestedFormParams, emptyBody, responseWithOkStatus, new DateTime(2016, 5, 29)
             ));
 
-            _fakeRequestResponseRepository.Stub(s => s.GetAll()).Return(fakeRequestResponses);
+            A.CallTo(() => _fakeRequestResponseRepository.GetAll()).Returns(fakeRequestResponses);
 
             var response = _requestValidator.GetValidatedFakeResponse(
                 RequestedMethod, RequestedPath,

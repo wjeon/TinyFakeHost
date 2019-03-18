@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Linq;
+using FakeItEasy;
 using NUnit.Framework;
-using Rhino.Mocks;
 using TinyFakeHostHelper.Fakers;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
@@ -9,6 +9,7 @@ using TinyFakeHostHelper.Supports;
 
 namespace TinyFakeHostHelper.Tests.Unit
 {
+    [TestFixture]
     public class RequestResponseFakerTests
     {
         private IFakeRequestResponseRepository _repository;
@@ -36,12 +37,12 @@ namespace TinyFakeHostHelper.Tests.Unit
         public void DeleteFakeById_method_calls_DeleteById_method_in_FakeRequestResponseRepository()
         {
             var id = Guid.NewGuid();
-            var repository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
+            var repository = A.Fake<IFakeRequestResponseRepository>();
             _faker = new RequestResponseFaker(repository);
 
             _faker.DeleteFakeById(id);
 
-            repository.AssertWasCalled(r => r.DeleteById(id));
+            A.CallTo(() => repository.DeleteById(id)).MustHaveHappened();
         }
 
         [Test]
@@ -70,12 +71,12 @@ namespace TinyFakeHostHelper.Tests.Unit
         [Test]
         public void DeleteAllFakes_method_calls_DeleteAll_method_in_FakeRequestResponseRepository()
         {
-            var repository = MockRepository.GenerateStub<IFakeRequestResponseRepository>();
+            var repository = A.Fake<IFakeRequestResponseRepository>();
             _faker = new RequestResponseFaker(repository);
 
             _faker.DeleteAllFakes();
 
-            repository.AssertWasCalled(r => r.DeleteAll());
+            A.CallTo(() => repository.DeleteAll()).MustHaveHappened();
         }
 
         [Test]

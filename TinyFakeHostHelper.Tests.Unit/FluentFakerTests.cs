@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Net;
+using FakeItEasy;
 using NUnit.Framework;
-using Rhino.Mocks;
 using TinyFakeHostHelper.Fakers;
 using TinyFakeHostHelper.Persistence;
 using TinyFakeHostHelper.RequestResponse;
@@ -19,7 +19,7 @@ namespace TinyFakeHostHelper.Tests.Unit
         [SetUp]
         public void SetUp()
         {
-            var dateTimeProvider = MockRepository.GenerateMock<IDateTimeProvider>();
+            var dateTimeProvider = A.Fake<IDateTimeProvider>();
             _repository = new FakeRequestResponseRepository(dateTimeProvider);
 
             _fluentFaker = new FluentFaker(_repository);
