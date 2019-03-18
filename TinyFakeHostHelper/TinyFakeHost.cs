@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using TinyFakeHostHelper.Asserters;
@@ -53,36 +54,32 @@ namespace TinyFakeHostHelper
 
             if (_hostStarted) return;
 
-            throw new Exception("Fake host failed to start because it has conflicted with other host too long time.");
             _tinyHost.Dispose();
+            throw new Exception("Fake host failed to start because the port is in use too long time.");
         }
 
         private void TryStart()
         {
             const int waitMinutesUntilConflictedHostStops = 10;
+            var port = ParsePortNumberFrom(GetHostAddress(_tinyHost));
 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            while (!_hostStarted &&
-                   stopwatch.Elapsed < TimeSpan.FromMinutes(waitMinutesUntilConflictedHostStops))
-                try
+            while (!_hostStarted && stopwatch.Elapsed < TimeSpan.FromMinutes(waitMinutesUntilConflictedHostStops))
+            {
+                if (!IsPortFree(port))
                 {
-                    _nancyHost.Start();
-                    _hostStarted = true;
-                    Console.WriteLine(@"Fake Host '{0}' started.", _hostId.FirstSegment());
+                    Console.WriteLine(@"The port {0} for fake Host '{1}' is in use now ({2:o}). Wait until the port becomes available!!!",
+                        port, _hostId.FirstSegment(), DateTime.Now);
+                    Thread.Sleep(100);
+                    continue;
                 }
-                catch (HttpListenerException e)
-                {
-                    if (e.Message.StartsWith("Failed to listen on prefix 'http") &&
-                        e.Message.EndsWith("/' because it conflicts with an existing registration on the machine."))
-                    {
-                        Console.WriteLine(@"Fake Host '{0}' conflicted with other host. Wait for the other host stops.",
-                                          _hostId.FirstSegment());
-                        Thread.Sleep(100);
-                    }
-                    else throw;
-                }
+
+                _tinyHost.Start();
+                _hostStarted = true;
+                Console.WriteLine(@"Fake Host '{0}' started at {1:o}.", _hostId.FirstSegment(), DateTime.Now);
+            }
 
             stopwatch.Stop();
         }
@@ -110,13 +107,48 @@ namespace TinyFakeHostHelper
                 Console.WriteLine(@"Fake Host '{0}' not started.", _hostId.FirstSegment());
                 return;
             }
-            Console.WriteLine(@"Fake Host '{0}' stopped.", _hostId.FirstSegment());
             _tinyHost.StopAsync(timeout ?? TimeSpan.FromMilliseconds(100)).Wait();
+            Console.WriteLine(@"Fake Host '{0}' stopped at {1:o}.", _hostId.FirstSegment(), DateTime.Now);
         }
 
         public void Dispose()
         {
             _tinyHost.Dispose();
+        }
+
+        private static int ParsePortNumberFrom(string hostAddress)
+        {
+            return int.Parse(hostAddress.Split(':')[2].Split('/')[0]);
+        }
+
+        private static string GetHostAddress(IWebHost host)
+        {
+            return ((IServerAddressesFeature)host.ServerFeatures.First().Value).Addresses.First();
+        }
+
+        private static bool IsPortFree(int port)
+        {
+            var tcpListener = default(TcpListener);
+
+            try
+            {
+                var ipAddress = Dns.GetHostEntry("localhost").AddressList[0];
+
+                tcpListener = new TcpListener(ipAddress, port);
+                tcpListener.Start();
+
+                return true;
+            }
+            catch (SocketException)
+            {
+            }
+            finally
+            {
+                if (tcpListener != null)
+                    tcpListener.Stop();
+            }
+
+            return false;
         }
     }
 }

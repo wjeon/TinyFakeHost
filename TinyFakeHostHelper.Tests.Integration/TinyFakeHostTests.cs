@@ -40,11 +40,11 @@ namespace TinyFakeHostHelper.Tests.Integration
         [Test]
         public void When_2_TinyFakeHosts_run_concurrently_with_the_same_port_number_one_waits_until_the_other_stops()
         {
-            var runFakeHostThread = new Thread(() => RunFakeHostFor(5.Seconds()));
+            var runFakeHostThread = new Thread(() => RunFakeHostFor(3.Seconds()));
 
             runFakeHostThread.Start();
 
-            Thread.Sleep(4.Seconds());
+            Thread.Sleep(2.Seconds());
 
             Assert.DoesNotThrow(() => RunFakeHostFor(10.Milliseconds()));
         }
@@ -73,7 +73,7 @@ namespace TinyFakeHostHelper.Tests.Integration
             var response = RestClient.Execute(_request);
             Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
             Assert.AreEqual(typeof (WebException), response.ErrorException.GetType());
-            Assert.AreEqual("Unable to connect to the remote server", response.ErrorMessage);
+            Assert.That(response.ErrorMessage.StartsWith("No connection could be made because the target machine actively refused it"));
         }
     }
 }
