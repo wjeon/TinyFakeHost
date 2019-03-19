@@ -15,4 +15,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting.WindowsServices" Version="2.2.0" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(SolutionDir)README.md $(OutDir)readme.txt" />
+  </Target>
+
 </Project>
