@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyName>TinyFakeHost</AssemblyName>
+    <AssemblyName>TinyFakeHostApp</AssemblyName>
     <Platforms>AnyCPU;x86</Platforms>
     <Product>TinyFakeHost</Product>
     <Version>1.0.0.0</Version>

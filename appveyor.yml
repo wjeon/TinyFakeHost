@@ -1,5 +1,5 @@
 # https://dotnetcore.gaprogman.com/2017/06/08/continuous-integration-and-appveyor/
-version: 0.1.{build}-{branch}
+version: 2.0.{build}-{branch}
 skip_tags: true
 image: Visual Studio 2017
 environment:

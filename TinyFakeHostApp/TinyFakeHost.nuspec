@@ -17,7 +17,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\netcoreapp2.0\TinyFakeHost.dll" target="lib\netcoreapp2.0" /> 
+    <file src="bin\netcoreapp2.0\TinyFakeHostApp.dll" target="lib\netcoreapp2.0" /> 
     <file src="bin\netcoreapp2.0\readme.txt" target="" /> 
   </files>
 </package>
