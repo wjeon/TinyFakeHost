@@ -12,7 +12,7 @@ before_build:
   # Display .NET Core version
 - cmd: dotnet --version
   # Display minimal restore text
-- cmd: dotnet restore .\$env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj --verbosity m
+- cmd: dotnet restore .\TinyFakeHostHelper\TinyFakeHostHelper.csproj --verbosity m
 - ps: >-
     $env:ASSEMBLY_VERSION=$env:APPVEYOR_BUILD_VERSION.substring(0, $env:APPVEYOR_BUILD_VERSION.indexOf("-"))
 
@@ -48,12 +48,12 @@ before_build:
 
     del $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp1
 
-    ren $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2 TinyFakeHostHelper.csproj
+    ren $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2 $env:VS_PROJECT_NAME.csproj
 build:
   verbosity: minimal
 build_script:
   # output will be in .\$env:VS_PROJECT_NAME\bin\debug\netcoreapp2.2\publish
-- cmd: dotnet publish .\$env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj
+- cmd: dotnet publish .\TinyFakeHostHelper\TinyFakeHostHelper.csproj
 after_build:
 - ps: >-
     nuget pack "$env:APPVEYOR_BUILD_FOLDER\$env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj"
