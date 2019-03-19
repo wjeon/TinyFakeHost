@@ -7,10 +7,13 @@
     <owners>WJ</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Tiny host that fakes services for test</description>
-    <releaseNotes>Support dotNET Core 2.2, removed Nancy dependency and new features.</releaseNotes>
+    <releaseNotes>Support dotNET Core 2.2, removed Nancy dependency and added new features.</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>Tiny Fake Host</tags>
     <dependencies>
+      <dependency id="Microsoft.AspNetCore.Hosting" version="2.2.0" />
+      <dependency id="Microsoft.AspNetCore.Hosting.Abstractions" version="2.2.0" />
+      <dependency id="Microsoft.AspNetCore.Server.Kestrel" version="2.2.0" />
     </dependencies>
   </metadata>
   <files>
