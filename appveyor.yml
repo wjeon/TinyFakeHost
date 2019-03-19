@@ -40,15 +40,19 @@ before_build:
 
     ren $env:VS_PROJECT_NAME\$env:NUSPEC_FILE_NAME.temp $env:NUSPEC_FILE_NAME
 
-    cat $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj|%{$_-replace "<AssemblyVersion>(.*)</AssemblyVersion>","<AssemblyVersion>$env:ASSEMBLY_VERSION</AssemblyVersion>"} > $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp1
+    cat $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj|%{$_-replace "<Version>(.*)</Version>","<Version>$env:ASSEMBLY_VERSION</Version>"} > $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp1
 
-    cat $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp1|%{$_-replace "<FileVersion>(.*)</FileVersion>","<FileVersion>$env:ASSEMBLY_VERSION</FileVersion>"} > $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2
+    cat $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp1|%{$_-replace "<AssemblyVersion>(.*)</AssemblyVersion>","<AssemblyVersion>$env:ASSEMBLY_VERSION</AssemblyVersion>"} > $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2
+
+    cat $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2|%{$_-replace "<FileVersion>(.*)</FileVersion>","<FileVersion>$env:ASSEMBLY_VERSION</FileVersion>"} > $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp3
 
     del $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj
 
     del $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp1
 
-    ren $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2 "$env:VS_PROJECT_NAME.csproj"
+    del $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2
+
+    ren $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp3 "$env:VS_PROJECT_NAME.csproj"
 build:
   verbosity: minimal
 build_script:
