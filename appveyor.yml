@@ -5,7 +5,7 @@ image: Visual Studio 2017
 environment:
   BUILD_INFO: ''
   INFORMATIONAL_BUILD_VERSION: ''
-  VS_PROJECT_NAME: TinyFakeHostHelper
+  VS_PROJECT_NAME: TinyFakeHostApp
   NUSPEC_FILE_NAME: TinyFakeHost.nuspec
   CI_BRANCH: tfh-dev
   RC_BRANCH: tfh-rc
@@ -58,7 +58,7 @@ build:
   verbosity: minimal
 build_script:
   # Output will be in .\$env:VS_PROJECT_NAME\bin\debug\netcoreapp2.2\publish
-- cmd: dotnet publish .\TinyFakeHostHelper\TinyFakeHostHelper.csproj
+- cmd: dotnet publish .\TinyFakeHostApp\TinyFakeHostApp.csproj
 test_script:
   # Run all the tests
 - cmd: dotnet test
