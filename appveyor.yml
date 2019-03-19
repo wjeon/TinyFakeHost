@@ -1,0 +1,61 @@
+version: 0.1.{build}-{branch}
+skip_tags: true
+image: Visual Studio 2017
+environment:
+  BUILD_INFO: ''
+  INFORMATIONAL_BUILD_VERSION: ''
+  VS_PROJECT_NAME: TinyFakeHostHelper
+  NUSPEC_FILE_NAME: TinyFakeHost.nuspec
+  CI_BRANCH: tfh-dev
+  RC_BRANCH: tfh-rc
+before_build:
+  # Display .NET Core version
+- cmd: dotnet --version
+  # Display minimal restore text
+- cmd: dotnet restore .\$env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj --verbosity m
+- ps: >-
+    $env:ASSEMBLY_VERSION=$env:APPVEYOR_BUILD_VERSION.substring(0, $env:APPVEYOR_BUILD_VERSION.indexOf("-"))
+
+    $branch=$env:APPVEYOR_BUILD_VERSION.substring($env:APPVEYOR_BUILD_VERSION.indexOf("-")+1, $env:APPVEYOR_BUILD_VERSION.length-$env:APPVEYOR_BUILD_VERSION.indexOf("-")-1)
+
+    $env:ASSEMBLY_VERSION
+
+    $branch
+
+    $env:BUILD_INFO="-pre-alpha"
+
+    if ($branch -eq $env:CI_BRANCH) {$env:BUILD_INFO="-alpha"}
+
+    if ($branch -eq $env:RC_BRANCH) {$env:BUILD_INFO="-beta"}
+
+    if ($branch -eq "master") {$env:BUILD_INFO=""}
+
+    $env:INFORMATIONAL_BUILD_VERSION="$env:ASSEMBLY_VERSION$env:BUILD_INFO"
+
+    $env:INFORMATIONAL_BUILD_VERSION
+
+    cat $env:VS_PROJECT_NAME\$env:NUSPEC_FILE_NAME|%{$_-replace "<version>(.*)</version>","<version>$env:INFORMATIONAL_BUILD_VERSION</version>"} > $env:VS_PROJECT_NAME\$env:NUSPEC_FILE_NAME.temp
+
+    del $env:VS_PROJECT_NAME\$env:NUSPEC_FILE_NAME
+
+    ren $env:VS_PROJECT_NAME\$env:NUSPEC_FILE_NAME.temp $env:NUSPEC_FILE_NAME
+
+    cat $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj|%{$_-replace "<AssemblyVersion>(.*)</AssemblyVersion>","<AssemblyVersion>$env:ASSEMBLY_VERSION</AssemblyVersion>"} > $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp1
+
+    cat $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp1|%{$_-replace "<FileVersion>(.*)</FileVersion>","<FileVersion>$env:ASSEMBLY_VERSION</FileVersion>"} > $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2
+
+    del $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj
+
+    del $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp1
+
+    ren $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2 TinyFakeHostHelper.csproj
+build:
+  verbosity: minimal
+build_script:
+  # output will be in .\$env:VS_PROJECT_NAME\bin\debug\netcoreapp2.2\publish
+- cmd: dotnet publish .\$env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj
+after_build:
+- ps: >-
+    nuget pack "$env:APPVEYOR_BUILD_FOLDER\$env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj"
+
+    Push-AppveyorArtifact *.nupkg
