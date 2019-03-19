@@ -1,3 +1,4 @@
+# https://dotnetcore.gaprogman.com/2017/06/08/continuous-integration-and-appveyor/
 version: 0.1.{build}-{branch}
 skip_tags: true
 image: Visual Studio 2017
@@ -11,8 +12,8 @@ environment:
 before_build:
   # Display .NET Core version
 - cmd: dotnet --version
-  # Display minimal restore text
-- cmd: dotnet restore .\TinyFakeHostHelper\TinyFakeHostHelper.csproj --verbosity m
+  # Restore packages. Display minimal restore text
+- cmd: dotnet restore --verbosity m
 - ps: >-
     $env:ASSEMBLY_VERSION=$env:APPVEYOR_BUILD_VERSION.substring(0, $env:APPVEYOR_BUILD_VERSION.indexOf("-"))
 
@@ -56,8 +57,11 @@ before_build:
 build:
   verbosity: minimal
 build_script:
-  # output will be in .\$env:VS_PROJECT_NAME\bin\debug\netcoreapp2.2\publish
+  # Output will be in .\$env:VS_PROJECT_NAME\bin\debug\netcoreapp2.2\publish
 - cmd: dotnet publish .\TinyFakeHostHelper\TinyFakeHostHelper.csproj
+test_script:
+  # Run all the tests
+- cmd: dotnet test
 after_build:
 - ps: >-
     nuget pack "$env:APPVEYOR_BUILD_FOLDER\$env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj"
