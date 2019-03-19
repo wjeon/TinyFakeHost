@@ -48,7 +48,7 @@ before_build:
 
     del $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp1
 
-    ren $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2 $env:VS_PROJECT_NAME.csproj
+    ren $env:VS_PROJECT_NAME\$env:VS_PROJECT_NAME.csproj.temp2 "$env:VS_PROJECT_NAME.csproj"
 build:
   verbosity: minimal
 build_script:
