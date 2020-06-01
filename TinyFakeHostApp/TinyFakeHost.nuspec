@@ -8,7 +8,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Tiny host that fakes services for test</description>
     <releaseNotes>Support dotNET Core, removed Nancy dependency and added new features.</releaseNotes>
-    <copyright>Copyright 2019</copyright>
+    <copyright>Copyright 2020</copyright>
     <tags>Tiny Fake Host</tags>
     <dependencies>
       <dependency id="Microsoft.AspNetCore.Hosting" version="2.0.0" />
