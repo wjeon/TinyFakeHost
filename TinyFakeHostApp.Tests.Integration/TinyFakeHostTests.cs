@@ -73,7 +73,7 @@ namespace TinyFakeHostApp.Tests.Integration
             var response = RestClient.Execute(_request);
             Assert.AreEqual(ResponseStatus.Error, response.ResponseStatus);
             Assert.AreEqual(typeof (WebException), response.ErrorException.GetType());
-            Assert.AreEqual("An error occurred while sending the request. A connection with the server could not be established", response.ErrorMessage);
+            Assert.AreEqual("No connection could be made because the target machine actively refused it. No connection could be made because the target machine actively refused it.", response.ErrorMessage);
         }
     }
 }

@@ -27,37 +27,46 @@ namespace TinyFakeHostApp.ServiceModules
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var request = context.Request;
-
-            var method = (Method)Enum.Parse(typeof(Method), request.Method);
-            var query = request.Query;
-            var form = request.Form();
-            var body = request.Body.AsString();
-
-            var requestedQuery = new FakeRequest
+            try
             {
-                Method = method,
-                Path = request.Path,
-                UrlParameters = query.ToParameters(),
-                FormParameters = form.ToParameters(),
-                Body = body
-            };
+                var request = context.Request;
 
-            if (_tinyFakeHostConfiguration.RequestedQueryPrint)
-                Console.WriteLine("Requested Query - {0}", requestedQuery);
+                var method = (Method)Enum.Parse(typeof(Method), request.Method);
+                var query = request.Query;
+                var form = request.Form();
+                var body = request.Body.AsString();
 
-            _requestedQueryRepository.Add(requestedQuery);
+                var requestedQuery = new FakeRequest
+                {
+                    Method = method,
+                    Path = request.Path,
+                    UrlParameters = query.ToParameters(),
+                    FormParameters = form.ToParameters(),
+                    Body = body
+                };
 
-            var response = _requestValidator.GetValidatedFakeResponse(method, request.Path, query, form, body);
+                if (_tinyFakeHostConfiguration.RequestedQueryPrint)
+                    Console.WriteLine("Requested Query - {0}", requestedQuery);
 
-            context.Response.Headers.Clear();
-            context.Response.ContentType = response.ContentType;
-            if (response.Headers != null)
-                response.Headers.Keys.ToList().ForEach(headerKey =>
-                    context.Response.Headers.Add(headerKey, response.Headers[headerKey]));
-            context.Response.StatusCode = response.StatusCode;
+                _requestedQueryRepository.Add(requestedQuery);
 
-            await context.Response.WriteAsync(response.Body ?? string.Empty);
+                var response = _requestValidator.GetValidatedFakeResponse(method, request.Path, query, form, body);
+
+                context.Response.Headers.Clear();
+                context.Response.ContentType = response.ContentType;
+                if (response.Headers != null)
+                    response.Headers.Keys.ToList().ForEach(headerKey =>
+                        context.Response.Headers.Add(headerKey, response.Headers[headerKey]));
+                context.Response.StatusCode = response.StatusCode;
+
+                await context.Response.WriteAsync(response.Body ?? string.Empty);
+            }
+            catch (Exception e)
+            {
+                context.Response.Headers.Clear();
+                context.Response.StatusCode = 500;
+                context.Response.WriteAsync(e.ErrorMessageBody("TinyFakeHostFakeServiceModuleError"));
+            }
         }
     }
 }

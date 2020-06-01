@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -22,32 +23,45 @@ namespace TinyFakeHostApp.ServiceModules
         {
             const string defaultContentType = "application/json";
 
-            var response = new FakeHttpResponse { ContentType = defaultContentType };
-
-            var requestFound = false;
-
-            foreach (var fakeRequestResponse in _fakeRequestResponseRepository.GetAll().OrderByDescending(f => f.Created))
+            try
             {
-                var fakeRequest = fakeRequestResponse.FakeRequest;
+                var response = new FakeHttpResponse { ContentType = defaultContentType };
 
-                if (fakeRequest.Method.Equals(method) && fakeRequest.Path.Matches(url) &&
-                    fakeRequest.UrlParameters.Matches(query) && fakeRequest.FormParameters.Matches(form) &&
-                    (fakeRequest.Body.Matches(body) || method.IsBodyAllowedMethod() && fakeRequest.FormParameters.Matches(body))
-                ) {
-                    var fakeResponse = fakeRequestResponse.FakeResponse;
+                var requestFound = false;
 
-                    if (fakeResponse.MillisecondsSleep > 0)
-                        Thread.Sleep(fakeResponse.MillisecondsSleep);
+                foreach (var fakeRequestResponse in _fakeRequestResponseRepository.GetAll().OrderByDescending(f => f.Created))
+                {
+                    var fakeRequest = fakeRequestResponse.FakeRequest;
 
-                    response = fakeResponse.ToResponse(defaultContentType);
-                    requestFound = true;
-                    break;
+                    if (fakeRequest.Method.Equals(method) && fakeRequest.Path.Matches(url) &&
+                        fakeRequest.UrlParameters.Matches(query) && fakeRequest.FormParameters.Matches(form) &&
+                        (fakeRequest.Body.Matches(body) || method.IsBodyAllowedMethod() && fakeRequest.FormParameters.Matches(body))
+                    )
+                    {
+                        var fakeResponse = fakeRequestResponse.FakeResponse;
+
+                        if (fakeResponse.MillisecondsSleep > 0)
+                            Thread.Sleep(fakeResponse.MillisecondsSleep);
+
+                        response = fakeResponse.ToResponse(defaultContentType);
+                        requestFound = true;
+                        break;
+                    }
                 }
+
+                if (!requestFound) response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+                return response;
             }
-
-            if (!requestFound) response.StatusCode = (int)HttpStatusCode.BadRequest;
-
-            return response;
+            catch (Exception e)
+            {
+                return new FakeHttpResponse
+                {
+                    ContentType = defaultContentType,
+                    StatusCode = 500,
+                    Body = e.ErrorMessageBody("TinyFakeHostRequestValidatorError")
+                };
+            }
         }
     }
 }

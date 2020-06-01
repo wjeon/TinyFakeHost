@@ -7,6 +7,9 @@ namespace TinyFakeHostApp.Extensions
     {
         public static string AsString(this Stream stream, Encoding encoding = null)
         {
+            if (!stream.CanSeek || !stream.CanRead)
+                return null;
+
             string value;
 
             using (var reader = new StreamReader(stream, encoding ?? Encoding.UTF8))
