@@ -4,40 +4,39 @@
 
 ***Summary***
 
-TinyFakeHost is a library that can help you to fake a backend web service when you test an application that calls the backend service.
+TinyFakeHost is a library designed to simulate backend web service responses in your tests. It allows you to easily fake HTTP responses for your application, enabling more comprehensive testing compared to mocking the client method directly.
 
-Faking the backend service sometime can be more helpful than faking the service client method to return the fake result for the situations like:
-* the service client method may have a bug
-* you need to test for the backend service timing out
+***Why Use TinyFakeHost?***
 
-and more.
+When testing applications that make backend calls, mocking client code can fall short. TinyFakeHost provides a simple but powerful solution to fake real HTTP backend behavior in your tests.
 
+Use TinyFakeHost when you want to:
+* Simulate realistic backend responses, including query parameters, form posts, and HTTP methods.
+* Test for timeouts, slow responses, or specific HTTP status codes (e.g., 404, 500).
+* Assert that your application actually made the expected requests - not just return fake data.
+* View all incoming requests during tests for easier debugging.
 
-With TinyFakeHost, you can:
-* fake a backend web service’s response for the expected query request with optional parameters
-* assert the expected query with optional parameters has been requested
-* check all the requested queries
+TinyFakeHost helps you validate the request construction (including query parameters and method), timing issues, and other edge cases that are difficult to test using client-side mocks alone.
 
-
-***NuGet***
+***NuGet Package***
 
 https://www.nuget.org/packages/TinyFakeHost/
 
 
-***Port conflict management:***
+***Port Conflict Handling***
 
-When two fake hosts run concurrently with the same port number, one fake host waits until the other finishes.
+When running multiple fake hosts on the same port, TinyFakeHost automatically prevents conflicts by having one fake host wait until the other finishes. This eliminates the need for manual port management, making it safe to run tests in parallel.
 
-Examples:
+Example Usage:
 ---------
-***Start and stop a fake host***
+***Start and Stop a Fake Host***
 ```
 [SetUp]
 public void SetUp()
 {
     _tinyFakeHost = new TinyFakeHost("http://localhost:5432/someService/v1/"); 
-    _faker = _tinyFakeHost.GetFaker(); // When you fake backend web service responses
-    _asserter = _tinyFakeHost.GetAsserter(); // When you assert expected queries have been requested
+    _faker = _tinyFakeHost.GetFaker(); // Use this to fake backend responses
+    _asserter = _tinyFakeHost.GetAsserter(); // Use this to assert expected queries
     _tinyFakeHost.Start();
 }
 
@@ -48,13 +47,14 @@ public void TearDown()
     _tinyFakeHost.Dispose();
 }
 ```
-***Fake web service response***
+***Fake a Web Service Response***
 ```
 [Test]
 public void Your_test_method()
 {
     // your test code . . . .
 
+    // Setup fake responses
     _faker.Fake(f => f
         .IfRequest("/vendors/9876-5432-1098-7654/products")
         .WithUrlParameters("type=desk&manufactureYear=2013")
@@ -76,33 +76,35 @@ public void Your_test_method()
     // your test code . . . .
 }
 ```
-***Fake web service processing long time (useful for testing the service timeout)***
+***Simulate Long Response Times (Timeout Testing)***
 ```
 [Test]
 public void Your_test_method()
 {
     // your test code . . . .
 
+    // Setup a fake response with a delay (simulates a service timeout)
     _faker.Fake(f => f
         .IfRequest("/vendors")
         .ThenReturn(new FakeResponse{
             ContentType = "application/json",
             Content = @"{""message"":""Request Timeout""}",
             StatusCode = HttpStatusCode.RequestTimeout,
-            MillisecondsSleep = 6000
+            MillisecondsSleep = 6000 // Simulate a timeout by sleeping for 6 seconds
         })
     );
 
     // your test code . . . .
 }
 ```
-***Assert requested query***
+***Assert the Requested Query***
 ```
 [Test]
 public void Your_test_method()
 {
     // your test code . . . .
 
+    // Assert that the expected request was made
     _asserter.Assert(a => a
         .Resource("/vendors/9876-5432-1098-7654/products")
         .WithUrlParameters("type=desk&manufactureYear=2013")
@@ -122,7 +124,7 @@ public void Your_test_method()
     );
 }
 ```
-***Check all the requested queries***
+***Check All Requested Queries***
 ```
 private void PrintRequestedQueries()
 {
@@ -130,7 +132,11 @@ private void PrintRequestedQueries()
         Console.WriteLine("Requested query - {0}", requestedQuery);
 }
 ```
-You can also set the RequestedQueryPrint property to true instead. With this way, the requested queries will still be printed directly from the fake host even if there is an error in the service client method call.
+Alternatively, you can set the RequestedQueryPrint property to true to automatically print requested queries:
 ```
-    _tinyFakeHost.RequestedQueryPrint = true;
+_tinyFakeHost.RequestedQueryPrint = true; // Automatically prints requested queries
 ```
+
+***Additional Notes***
+* TinyFakeHost is best suited for integration testing, where you need to test the actual flow of requests and responses.
+* The fake host runs a real HTTP listener and responds to HTTP requests as configured, so you can simulate complex service behaviors, including failures, timeouts, and status codes.
