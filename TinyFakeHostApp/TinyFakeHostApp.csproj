@@ -5,6 +5,7 @@
     <AssemblyName>TinyFakeHostApp</AssemblyName>
     <Platforms>AnyCPU;x86</Platforms>
     <Product>TinyFakeHost</Product>
+    <PackageId>TinyFakeHost</PackageId>
     <Version>1.0.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
