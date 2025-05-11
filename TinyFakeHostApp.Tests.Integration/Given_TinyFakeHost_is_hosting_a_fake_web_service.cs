@@ -64,7 +64,7 @@ namespace TinyFakeHostApp.Tests.Integration
             var request = new RestRequest(resourcePath, Method.POST);
 
             request.AddParameter(
-                new RestSharp.Parameter { Type = ParameterType.RequestBody, Name = "application/json", Value = body });
+                new RestSharp.Parameter("application/json", body, ParameterType.RequestBody));
 
             TinyFakeHost.RequestedQueryPrint = true;
 
